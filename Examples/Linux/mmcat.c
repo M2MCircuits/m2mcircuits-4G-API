@@ -37,7 +37,7 @@ int main(int argc, char **argv){
 		return 0;
 	}
 	mmSocketClose(mm, 0); //make sure at least one socket is closed.
-	int sid = mmSocketCreate(mm, argc==3);
+	int sid = mmSocketOpen(mm, argc==3);
 	if(sid < 0){
 		printf("Failed to create socket.\n");
 		return 0;

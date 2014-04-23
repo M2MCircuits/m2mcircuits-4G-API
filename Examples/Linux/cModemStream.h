@@ -3,7 +3,6 @@
  * #define [MICROCONTROLLER] before including ModemStream.h
  * Verniel Mesecher, Jagger McCord, Max Roycroft
  */
-
 #ifndef MODEMSTREAM
 #define MODEMSTREAM
 

@@ -12,7 +12,8 @@ int main(int argc, char **argv){
 	char number[11];
 	char message[180];
 	printf("%i messages: \n", count);
-	for(int i = 0; i < count; i++){
+	int i;
+	for(i = 0; i < count; i++){
 		mmRetrievePhoneNumber(mm, number, 11, messageids[i]);
 		mmRetrieveTextMessage(mm, message, 180, messageids[i]);
 		printf("Message from %s:\n%s\n", number, message);
