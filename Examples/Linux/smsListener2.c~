@@ -1,0 +1,115 @@
+/* Listens for incoming text messages and executes commands depending on their content.
+   Accepted messages:
+        "route1": follow the pre-set route1 mission on the pixhawk.
+	"gps": send back a message containing current GPS.
+	"go to <lat> <lon>": go to the specified GPS coordinate.
+
+   Compile: gcc -DLINUX -std=gnu99 smsListener2.c cModemInterface.c cModemStream.c cSMS.c -o smsListener2
+   Usage: the program is run on the drone's BB. It should begin listening on boot. To accomplish this, add the following lines to etc/rc.local:
+	sudo su
+	cd/home/debian/makermodem-master/Examples/Linux (or cd/<your_folder containing smsListener>)
+	./smsListener2
+
+*/
+
+#include <stdio.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include "cSMS.h"
+
+/* Print the last 5 received messages for testing */
+void messagesHead(int count, int* messageIds, struct ModemInterface *mm) {
+  char phoneNumber[11];
+  char message[180];
+
+  for (int i = count-5; i < count; i++) {
+    if (i >= 0) {
+      mmRetrievePhoneNumber(mm, phoneNumber, 11, messageIds[i]);
+      mmRetrieveTextMessage(mm, message, 180, messageIds[i]);
+      printf("Message count %d from %s:\n%s\n", i, phoneNumber, message); //Prints to console for testing purposes
+    }
+  }
+}
+
+/* Check if a phone number is accepted to send commands.
+   
+   Always return true for now
+ */
+int isNumberValid(char *phoneNumber) {
+  return 1;
+}
+
+int main(int argc, char **argv){
+	//Sets up connection to MakerModem and exits if initialization fails
+	struct ModemInterface *mm = mmCreate("/dev/ttyACM0");
+	if(!mmInit(mm)){
+		printf("Unable to initialize modem.");
+		return 0;
+	} else {
+		printf("Successfully initialized.\n");
+	}
+	
+	int messageIds[256];
+	int count = mmGetTextLists(mm, messageIds, 256);
+
+	// Print the original text list
+	printf("Last messages: \n");
+	messagesHead(count, messageIds, mm);
+	
+	char phoneNumber[11];
+	char message[180];
+	char coordMessage[180];
+
+	// fake GPS for testing
+	double lat = 32.9851001;
+	double longit = -96.74942709999999;
+	
+	while (true) {
+		sleep(1);
+		// printf("Time Up!\n");
+		
+		int newCount = mmGetTextLists(mm, messageIds, 256);
+		
+		//Checks if new messages have come in
+		if (newCount > count){
+			int diff = newCount - count;
+			printf("%i new messages have been received.\n", diff);//Prints to console for testing purposes
+
+			//For every new message received in this loop cycle
+			for(int i = count; i < newCount; i++){
+			        mmRetrievePhoneNumber(mm, phoneNumber, 11, messageIds[i]);
+				mmRetrieveTextMessage(mm, message, 180, messageIds[i]);
+				printf("Message from %s:\n%s\n", phoneNumber, message); //Prints to console for testing purposes
+
+				if (isNumberValid(phoneNumber)) {
+				      //Converts message to lowercase to reduce input error
+				      for(int i = 0; message[i]; i++){
+					    message[i] = tolower(message[i]);
+				      }
+	
+				      //Essentially a switch statement for strings. Responds to the sending number with a text based on the command received.
+				      if (strcmp(message, "gps") == 0) {
+					    //Gives coordinates of GPS location and a Google Maps link
+					    snprintf(coordMessage, 180, "Lat: %f\tLong: %f\nGoogle Maps Link: http://maps.google.com/?q=%f,%f", lat, longit, lat, longit);
+					    mmSendTextMessage(mm, phoneNumber, coordMessage);
+				      } 
+				      else if (strcmp(message, "route1") == 0) {
+					    //Tells drone to go on route 1
+					    system(".//route1");
+					    mmSendTextMessage(mm, phoneNumber, "Route 1 activated.");
+				      }
+				      else {
+					    // Unsupported/unrecognized commands
+					    mmSendTextMessage(mm, phoneNumber, "Unrecognized command.");
+				      }
+				}
+				
+			}
+			// mmDeleteTextMessage(mm, messageIds[5]);
+			count = newCount;
+			
+		} //end if 
+		
+	} //end while
+	
+} 
