@@ -1,0 +1,118 @@
+BeagleBone/MakerModem development Notes
+
+——————————————————————————————————————————————————————————————————————————————————————————————————————————————
+This file contains notes on BeagleBone Black development with the Modem Maker. 
+
+
+
+Debian Login
+**************************************************************************************************************
+Note: Beaglebone Black login-
+Username: debian, Password: temppwd
+
+
+
+Updating date on BeagleBone Black  (Note: BB looses date & time on each power down)
+**************************************************************************************************************
+Update date on beaglebone black and check -
+root@beaglebone:~# ntpdate -b -s -u pool.ntp.org
+root@beaglebone:~# date
+Sat May 18 22:52:56 BST 2013
+
+Note: date and time can be set up to be updated automatically from a server on start up, above lines only
+quick fix
+
+
+
+Installing SWIG
+**************************************************************************************************************
+SWIG - SWIG is an interface compiler that connects programs written in C and C++ 
+with scripting languages such as Perl, Python, Ruby, and Tcl. It works by taking the 
+declarations found in C/C++ header files and using them to generate the wrapper code
+that scripting languages need to access the underlying C/C++ code.
+
+install swig-
+sudo apt-get install swig
+
+
+
+Installing Python-dev
+**************************************************************************************************************
+python-dev - contains headers files needed to build Python extensions.
+sudo apt-get install python-dev
+
+
+
+Installing Adaftui_BBIO_Library
+**************************************************************************************************************
+Adafruit_BBIO_Library - This is a set of Python tools to allow GPIO, PWM, and ADC access
+on the BeagleBone using the Linux 3.8 Kernel and above (latest releases).
+To install the Adafruit_BBIO_Library just follow the tutorial from link below
+
+on Github - https://github.com/adafruit/adafruit-beaglebone-io-python
+Installing & Tutorial -
+https://learn.adafruit.com/setting-up-io-python-library-on-beaglebone-black/installation-on-ubuntu
+
+
+
+Compiling the python and MakerModemLib c files Using SWIG
+**************************************************************************************************************
+In order to compile the MakerModemLib c file using SWIG just run the compileSwig.sh
+file on the BB by - 
+./compileSwig.sh
+
+Note: if an error shows it cannot find your python.h header file, the directory path given
+in the compileSwig.sh file   -I/usr/local/include/python2.7   might need to be changed
+
+
+
+Running Python/MakerModem example script
+**************************************************************************************************************
+
+
+
+
+Example using MakerModem.py in the Python Interpreter
+(creating an interface structure and sending a text message)
+**************************************************************************************************************
+start python on the linux terminal  with - python
+
+import MakerModem
+mi = MakerModem.mmCreate(“/dev/ttyACM0”)
+MakerModem.mmCheckForConnection(mi)		// checks for network connection
+num = “9728832111”
+message = “test message”
+MakerModem.mmSendTextMessage(mi, num, message) 
+
+
+
+Enableing Serial UART on Beaglebone Black
+**************************************************************************************************************
+Note: the following commands activate UARTS but are not persistent
+
+// Change to Root
+
+sudo su
+// Activate UART1
+echo BB-UART1 > /sys/devices/bone_capemgr.*/slots
+ 
+// Activate UART2
+echo BB-UART2 > /sys/devices/bone_capemgr.*/slots
+
+Note: to activate UARTS and allow them to be persistant changes in Debian system, add the following line
+into /boot/uboot/uEnv.txt
+
+// enable UART1 and UART2
+optargs=capemgr.enable_partno=BB-UART1,BB-UART2
+
+
+
+Displaying and Changing BAUD rate for UART's on BeagleBone Black
+**************************************************************************************************************
+// to display current UART baud rate
+stty -F /dev/ttyO2
+
+// to change the UART baud rate
+stty -F /dev/ttyO2 115200
+
+
