@@ -1,5 +1,5 @@
 // rcSignalListener.c
-// Functionality: used to capture 9 bytes of data from makermodem over
+// Functionality: used to capture 5 bytes of data from makermodem over
 // usb/UART3 connection and then retransmit them to a MSP430 over UART2 
 // Three basic steps
 // 1. make interface connection to maker modem
@@ -13,13 +13,13 @@
 // TI LanchPad MSP430 UART 		RX 		TX 		CTS 	RTS 	Device
 
 // compile line
-// gcc -DLINUX -std=gnu99 rcListener.c cModemInterface.c cModemStream.c -o rc
+// gcc rcListener.c cModemInterface.c cModemStream.c -o rc
 
 
 // Maker Modem library header files
-#define LINUX
-#include "cModemStream.h"
+//#define LINUX
 #include "cModemInterface.h"
+// #include "cModemStream.h"
 
 // Standard header files
 #include <stdio.h>
@@ -87,7 +87,7 @@ int init()
 	}
 
 
-	// open usb serial port @ 115200 baud for reading --- maker modem to RX on BeagleBoard
+	// open usb serial port @ 115200 baud for reading --- RX from maker modem
 	modem = mmCommInit("/dev/ttyACM0", 115200);
 	if ( modem ){
 		check2 = 1;
@@ -99,8 +99,8 @@ int init()
 	}
 
 
-	// open serial port UART2 @ 115200 baud for writing --- TX on BeagleBoard to MSP430
-	int fd = open("/dev/ttyO2", O_WRONLY | O_NOCTTY); // 
+	// open serial port UART2 @ 115200 baud for writing --- TX to MSP430
+	int fd = open("/dev/ttyO2", O_WRONLY | O_NOCTTY);
 	if ( fd ){
 		printf("opened /dev/ttyO2 for writing at 115200\n");
 		check3 = 1;
@@ -115,5 +115,3 @@ int init()
 	else
 		return 0;
 }
-
-
