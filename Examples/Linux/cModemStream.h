@@ -28,9 +28,7 @@
 #include <linux/serial.h>
 #include <syslog.h>
 #define F(str) str
-typedef int bool;
-#define true 1
-#define false 0
+#include <stdbool.h>
 
 
 static int rate_to_constant(int baudrate) {
@@ -44,9 +42,10 @@ static int rate_to_constant(int baudrate) {
 	default: return 0;
 	}
 #undef B
-}    
-void sleep_seconds(int seconds);
+}   
 #endif
+void sleep_seconds(int seconds);
+void sleep_millis(int millis);
 
 
 #ifdef _WIN32
@@ -55,6 +54,7 @@ void sleep_seconds(int seconds);
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#define F(str) str
 #endif
 
 
@@ -73,7 +73,7 @@ struct ModemStream {
 	HANDLE hSerial; //Serial comm handler
 	COMSTAT status; //Get various info about the connection;
 	DWORD errors; //keep track of last error
-	//LPCWSTR port;
+	LPCWSTR port;
 	bool connected;
 	char peekChar;
 	bool peeked;
@@ -88,7 +88,7 @@ bool mmFind(struct ModemStream* modem, FlashStringHelper target);
 int mmCommInit(const char * device, int rate);
 #endif
 #ifdef _WIN32
-int mmCommInit(const char * portname, struct ModemStream* modem);
+int mmCommInit(const char * portnamem, struct ModemStream* modem);
 #endif
 
 int mmAvailable(struct ModemStream* modem);
@@ -97,11 +97,15 @@ int mmWrite(struct ModemStream* modem, char *buffer, int bytes);
 int mmWriteByte(struct ModemStream* modem, char buffer);
 int mmPrint(struct ModemStream* modem, char* buffer);
 int mmPrinti(struct ModemStream* modem, int num);
-bool mmFlush(struct ModemStream* modem);
+void mmFlush(struct ModemStream* modem);
+char mmFindChars(struct ModemStream *modem, char a, char b);
 bool mmFind(struct ModemStream* modem, char* target);
+bool mmFindChar(struct ModemStream *modem, char c);
+//bool mmFindUntil(struct ModemStream* modem, char* target, char* term);
 char mmPeek(struct ModemStream* modem);
 int mmReadBytes(struct ModemStream* modem, char* buffer, int length);
 int mmReadBytesUntil(struct ModemStream* modem, char target, char* buffer, int length);
 long mmParseInt(struct ModemStream* modem);
-//bool mmFindUntil(struct ModemStream* modem, char* target, char* term);
+
+
 #endif

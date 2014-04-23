@@ -1,175 +1,133 @@
 #include "cSMS.h"
 
-int sendTextMessage(struct ModemInterface* interf, char* number, char* buffer) {
-#if defined(LINUX) || defined(ARDUINO)
-	mmSendCommand(interf, F("AT+CMGS=\""));
-	mmSendCommand(interf, number);
-	mmSendCommand(interf, F("\"\r"));
-	if (mmFind(interf->modem, F(">"))) {
-		mmSendCommand(interf, buffer);
-		mmWriteByte(interf->modem, 26);
-		mmSendCommand(interf, F("\r"));
-		return 1;
-}
-	return 0;
-#endif
-#ifdef _WIN32
-	char c;
-	mmSendCommand(interf, "AT+CMGS=\"");
-	mmSendCommand(interf, number);
-	mmSendCommand(interf, "\"\r");
-	Sleep(1);
-	if (mmFind(interf->modem, ">")) {
-		mmSendCommand(interf, buffer);
-		mmWriteByte(interf->modem, (char)26);
-		mmSendCommand(interf, "\r");
-		return 1;
+bool mmSendTextMessage(struct ModemInterface* interface, char* number, char* buffer) {
+	mmSendCommand(interface, F("AT+CMGS=\""));
+	mmSendCommand(interface, number);
+	mmSendCommand(interface, F("\"\r"));
+	mmFind(interface->modem, F("AT+CMGS=\""));
+	
+	int c = mmFindChars(interface->modem, 'E', '>');
+	//sleep_millis(milliTimeoutSMS);
+	if (c == '>') {
+		mmSendCommand(interface, buffer);
+		mmWriteByte(interface->modem,26);
+		mmSendCommand(interface, F("\r"));
+		return true;
 	}
-	return 0;
-#endif
+	return false;
 }
 
-int getTextLists(struct ModemInterface* interf, int* ids, int length) {
-	int i = 0;
-	int temp, j;
-#if defined(LINUX) || defined(ARDUINO)
-	mmSendCommand(interf, F("AT+CMGL\r"));
-	while (mmFind(interf->modem, F("AT+CMGL")) && i < length) {
-		ids[i] = mmParseInt(interf->modem);
+int mmGetTextLists(struct ModemInterface* interface, int* ids, int length) {
+	mmSendCommand(interface, F("AT+CMGL\r"));
+	mmFind(interface->modem, F("AT+CMGL\r"));
+	int count = 0;
+	int c;
+	int len;
+	while(count < length){
+	int c = mmFindChars(interface->modem, 'O', '+');
+		if(c == '+'){
+			mmFindChar(interface->modem, ' '); //
+			ids[count++] = mmParseInt(interface->modem);
+			mmFindChar(interface->modem, ':');
+			mmFindChar(interface->modem, ',');
+			mmFindChar(interface->modem, ',');
+			len = mmParseInt(interface->modem);
+			mmFindChar(interface->modem, '\r');
+			for(int i = 0; i < len; i++) if(mmRead(interface->modem) < 0) i--;
+		}else{
+			break;
+		}
+	}
+	return count;
+	
+	/*while (mmFindChar(interface->modem, '+') && i < length) {
+		ids[i] = mmParseInt(interface->modem);
 		i++;
+		//mmFindChar(interface->modem, '+');
 	}
-#endif
-#ifdef _WIN32
-	char * buffer[32];
-	char * ptr;
-	mmSendCommand(interf, "AT+CMGL\r");
-	if (!mmFind(interf->modem, "+CMGL: "))
-		return -1;
-	else
-	{
-		if (mmReadBytesUntil(interf->modem, ',', buffer, 32))
-		{
-			ids[i] = (int)strtol((const char *)buffer, &ptr, 10);
-			i++;
+	return i;*/
+}
+
+int mmRetrieveTextMessage(struct ModemInterface* interface, char* buffer, int length, int id) {
+	mmSendCommand(interface, F("AT+CMGR="));
+	mmPrinti(interface->modem, id);
+	//mmSendCommand(interface, id);
+	mmWriteByte(interface->modem, '\r');
+	mmFind(interface->modem, F("AT+CMGR="));
+	int c = mmFindChars(interface->modem, 'E', ':');
+	int len;
+	if (c == ':') { //mmFindChar(interface->modem, ':')) {
+		mmFindChar(interface->modem, ':');
+		for(int i = 0; i < 7; i++) mmFindChar(interface->modem, ',');
+		
+		len = mmParseInt(interface->modem);
+		mmFindChar(interface->modem, '\n');
+		if(length > len) length = len;
+		len = length;
+		int count;
+		do{
+			count = mmReadBytes(interface->modem,buffer,length);
+			buffer+=count;
+			length-=count;
+		}while(length > 0);
+		buffer[0] = 0;
+		return len;
+	}
+	else {
+		return 0;
+	}
+}
+
+bool mmRetrievePhoneNumber(struct ModemInterface* interface, char* buffer, int length, int id) {
+	mmSendCommand(interface, F("AT+CMGR="));
+	mmPrinti(interface->modem, id);
+	//mmSendCommand(interface, id);
+	mmWriteByte(interface->modem, '\r');
+	mmFind(interface->modem, F("AT+CMGR="));
+	int c = mmFindChars(interface->modem, 'E', ':');
+	if (c == ':') {
+		mmFindChar(interface->modem, '+');
+		int index = 0;
+		length--; //save room for null terminator
+		while(index < length){
+			c = mmRead(interface->modem);
+			if( c < 0) continue;
+			if(c == '\"') break;
+			buffer[index++] = c;
 		}
+		buffer[index] = 0;
+		return index;
 	}
-
-	while (mmFind(interf->modem, "+CMGL: ") && i < length) {
-		if (mmReadBytesUntil(interf->modem, ',', buffer, 32))
-		{
-			temp = (int)strtol((const char *)buffer, &ptr, 10);
-			for (j = 0; j < i && ids[j] != temp; j++);
-			if (j == i)
-			{
-				ids[i] = temp;
-				i++;
-			}
-		}
+	else {
+		return 0;
 	}
-
-	PurgeComm(interf->modem->hSerial, PURGE_RXCLEAR | PURGE_TXCLEAR);
-#endif
-	return i;
 }
 
-int retrieveTextMessage(struct ModemInterface* interf, char* buffer, int length, int id) {
-#if defined(LINUX) || defined(ARDUINO)
-	mmSendCommand(interf, F("AT+CMGR="));
-	mmSendCommand(interf, id);
-	mmSendCommand(interf, F("\r"));
-	if (mmFind(interf->modem, F("+CMGR: "))) {
-		mmFind(interf->modem, F(","));
-		mmFind(interf->modem, F(","));
-		return mmReadBytesUntil(interf->modem, ',', buffer, length);
+bool mmRetrieveTimestamp(struct ModemInterface* interface, char* buffer, int length, int id) {
+	mmSendCommand(interface, F("AT+CMGR="));
+	mmPrinti(interface->modem, id);
+	//mmSendCommand(interface, id);
+	mmSendCommand(interface, F("\r"));
+	mmFind(interface->modem, F("AT+CMGR="));
+	int c = mmFindChars(interface->modem, 'E', ':');
+	if (c == ':') {
+		mmFindChar(interface->modem, ',');
+		mmFindChar(interface->modem, ',');
+		mmFindChar(interface->modem, ',');
+		mmFindChar(interface->modem, ',');
+		mmFindChar(interface->modem, '"');
+		return mmReadBytesUntil(interface->modem,'"',buffer,length);
 	}
 	else {
 		return 0;
 	}
-#endif
-#ifdef _WIN32
-	int total = 0;
-	sprintf(buffer, "AT+CMGR=%i", id);
-	mmSendCommand(interf, buffer);
-	mmSendCommand(interf, "\r");
-	if (mmFind(interf->modem, "+CMGR: ")) 
-	{
-		mmFind(interf->modem, "\n");
-		total = mmReadBytesUntil(interf->modem, (char)10, buffer, length);
-	}
-	PurgeComm(interf->modem->hSerial, PURGE_RXCLEAR | PURGE_TXCLEAR);
-	return total;
-#endif
 }
 
-int retrievePhoneNumber(struct ModemInterface* interf, char* buffer, int length, int id) {
-#if defined(LINUX) || defined(ARDUINO)
-	mmSendCommand(interf, F("AT+CMGR="));
-	mmSendCommand(interf, id);
-	mmSendCommand(interf, F("\r"));
-	if (mmFind(interf->modem, F("+CMGR: "))) {
-		mmFind(interf->modem, F(","));
-		return mmReadBytesUntil(interf->modem,',',buffer,length);
-	}
-	else {
-		return 0;
-	}
-#endif
-#ifdef _WIN32
-	mmSendCommand(interf, "AT+CMGR=");
-	mmSendCommand(interf, id);
-	mmSendCommand(interf, "\r");
-	if (mmFind(interf->modem, "+CMGR: ")) {
-		mmFind(interf->modem, ",");
-		return mmReadBytesUntil(interf->modem,',',buffer,length);
-	}
-	else {
-		return 0;
-	}
-#endif
-}
-
-int retrieveTimestamp(struct ModemInterface* interf, char* buffer, int length, int id) {
-#if defined(LINUX) || defined(ARDUINO)
-	mmSendCommand(interf, F("AT+CMGR="));
-	mmSendCommand(interf, id);
-	mmSendCommand(interf, F("\r"));
-	if (mmFind(interf->modem, F("+CMGR: "))) {
-		mmFind(interf->modem, F(","));
-		mmFind(interf->modem, F(","));
-		mmFind(interf->modem, F(","));
-		return mmReadBytesUntil(interf->modem,',',buffer,length);
-	}
-	else {
-		return 0;
-	}
-#endif
-#ifdef _WIN32
-	mmSendCommand(interf, "AT+CMGR=");
-	mmSendCommand(interf, id);
-	mmSendCommand(interf, "\r");
-	if (mmFind(interf->modem, "+CMGR: ")) {
-		mmFind(interf->modem, ",");
-		mmFind(interf->modem, ",");
-		mmFind(interf->modem, ",");
-		return mmReadBytesUntil(interf->modem, ',', buffer, length);
-	}
-	else {
-		return 0;
-	}
-#endif
-}
-
-int deleteTextMessage(struct ModemInterface* interf, int id) {
-#if defined(LINUX) || defined(ARDUINO)
-	mmSendCommand(interf, F("AT+CMGD="));
-	mmSendCommand(interf, id);
-	mmSendCommand(interf, F("\r"));
-	return mmFind(interf->modem, F("OK"));
-#endif
-#ifdef _WIN32
-	char cmd[128];
-	sprintf(cmd, "AT+CMGD=%i", id);
-	mmSendCommand(interf, "\r");
-	return mmFind(interf->modem, "OK");
-#endif
+bool mmDeleteTextMessage(struct ModemInterface* interface, int id) {
+	mmSendCommand(interface, F("AT+CMGD="));
+	mmPrinti(interface->modem, id);
+	//mmSendCommand(interface, id);
+	mmSendCommand(interface, F("\r"));
+	mmFind(interface->modem, F("AT+CMGD="));
+	return mmCheckForOkay(interface);
 }
