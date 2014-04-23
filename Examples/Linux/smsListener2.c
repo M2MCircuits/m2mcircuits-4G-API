@@ -15,6 +15,9 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
 #include "cSMS.h"
 
 /* Print the last 5 received messages for testing */
@@ -61,6 +64,51 @@ void followRoute1() {
 	printf("\nEnd Route 1 Logic\n");
 }
 
+/* Message format: "goto <LAT> <LON> */
+void goToGPS(char *message) {
+        /* Parse the lattitude and longitude from message*/
+  
+        // Find 2 spaces and end of string
+        int x1;
+	x1 = 0;
+	while (message[x1] != ' ') {
+	  x1 += 1;
+	}
+	int x2 = x1 + 1;
+	while (message[x2] != ' ') {
+	  x2 += 1;
+	}
+	int size = x2 + 1;
+	while (message[size] != '\0') {
+	  size += 1;
+	}
+
+	// Parse lattitude
+	char* lat = 0;
+
+	int begin_index = x1+1;
+	int end_index = x2;
+
+	int l = end_index - begin_index;
+	lat = (char*)malloc(l+1);
+	memcpy(lat, message + begin_index, l);
+	lat[l] = '\0';
+	
+	// Parse longitude
+	char* lon = 0;
+
+	begin_index = x2+1;
+	end_index = size;
+
+	l = end_index - begin_index;
+	lon = (char*)malloc(l+1);
+	memcpy(lon, message + begin_index, l);
+	lon[l] = '\0';
+
+	printf("Lat: %s, Lon: %s\n", lat, lon);
+	
+}
+
 int main(int argc, char **argv){
 	//Sets up connection to MakerModem and exits if initialization fails
 	struct ModemInterface *mm = mmCreate("/dev/ttyACM0");
@@ -85,7 +133,18 @@ int main(int argc, char **argv){
 	// fake GPS for testing
 	double lat = 32.9851001;
 	double longit = -96.74942709999999;
-	
+
+	/* Regular Expressions */
+	regex_t regex;
+
+	// Go to GPS
+	char *goToGPS = "go to*";
+	int retiGoTo = regcomp(&regex, goToGPS, 0);
+	if (retiGoTo) {
+	        fprintf(stderr, "Could not compile regex\n");
+	}
+
+	// Listen to SMSs
 	while (true) {
 		sleep(1);
 		// printf("Time Up!\n");
@@ -117,8 +176,15 @@ int main(int argc, char **argv){
 				      } 
 				      else if (strcmp(message, "route1") == 0) {
 					    //Tells drone to go on route 1
-					    system(".//route1");
+					    //system(".//route1");
 					    mmSendTextMessage(mm, phoneNumber, "Route 1 activated.");
+					    followRoute1();
+					    mmSendTextMessage(mm, phoneNumber, "Route 1 accomplished.");
+				      }
+				      else if (regexec(&regex, message, 0, NULL, 0)) {
+					    mmSendTextMessage(mm, phoneNumber, "Going to GPS location (., .).");
+					    goToGPS(message);
+					    mmSendTextMessage(mm, phoneNumber, "Mission accomplished.");
 				      }
 				      else {
 					    // Unsupported/unrecognized commands
