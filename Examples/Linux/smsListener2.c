@@ -29,14 +29,14 @@ void messagesHead(int count, int* messageIds, struct ModemInterface *mm) {
     if (i >= 0) {
       mmRetrievePhoneNumber(mm, phoneNumber, 11, messageIds[i]);
       mmRetrieveTextMessage(mm, message, 180, messageIds[i]);
-      printf("Message count %d from %s:\n%s\n", i, phoneNumber, message); //Prints to console for testing purposes
+      printf("Message from %s:\n%s\n", phoneNumber, message);
     }
   }
 }
 
 /* Check if a phone number is accepted to send commands.
    
-   Always return true for now
+   Always return true for testing
  */
 int isNumberValid(char *phoneNumber) {
   return 1;
@@ -105,15 +105,14 @@ void goToGPS(char *message) {
 	memcpy(lon, message + begin_index, l);
 	lon[l] = '\0';
 
-	printf("Lat: %s, Lon: %s\n", lat, lon);
-	
+	printf("Lat: %s, Lon: %s\n", lat, lon);	
 }
 
 int main(int argc, char **argv){
 	//Sets up connection to MakerModem and exits if initialization fails
 	struct ModemInterface *mm = mmCreate("/dev/ttyACM0");
 	if(!mmInit(mm)){
-		printf("Unable to initialize modem.");
+		printf("Unable to initialize modem.\n");
 		return 0;
 	} else {
 		printf("Successfully initialized.\n");
@@ -132,19 +131,20 @@ int main(int argc, char **argv){
 
 	// fake GPS for testing
 	double lat = 32.9851001;
-	double longit = -96.74942709999999;
+	double lon = -96.74942709999999;
 
 	/* Regular Expressions */
-	regex_t regex;
+	regex_t goToGPSRegext;
 
 	// Go to GPS
-	char *goToGPS = "go to*";
-	int retiGoTo = regcomp(&regex, goToGPS, 0);
+	char *goToGPSRegex = "goto*";
+	int retiGoTo = regcomp(&goToGPSRegext, goToGPSRegex, 0);
 	if (retiGoTo) {
 	        fprintf(stderr, "Could not compile regex\n");
 	}
 
 	// Listen to SMSs
+	printf("\nWaiting for SMS...\n");
 	while (true) {
 		sleep(1);
 		// printf("Time Up!\n");
@@ -171,7 +171,7 @@ int main(int argc, char **argv){
 				      //Essentially a switch statement for strings. Responds to the sending number with a text based on the command received.
 				      if (strcmp(message, "gps") == 0) {
 					    //Gives coordinates of GPS location and a Google Maps link
-					    snprintf(coordMessage, 180, "Lat: %f\tLong: %f\nGoogle Maps Link: http://maps.google.com/?q=%f,%f", lat, longit, lat, longit);
+					    snprintf(coordMessage, 180, "Lat: %f\tLong: %f\nGoogle Maps Link: http://maps.google.com/?q=%f,%f", lat, lon, lat, lon);
 					    mmSendTextMessage(mm, phoneNumber, coordMessage);
 				      } 
 				      else if (strcmp(message, "route1") == 0) {
@@ -181,7 +181,7 @@ int main(int argc, char **argv){
 					    followRoute1();
 					    mmSendTextMessage(mm, phoneNumber, "Route 1 accomplished.");
 				      }
-				      else if (regexec(&regex, message, 0, NULL, 0)) {
+				      else if (regexec(&goToGPSRegext, message, 0, NULL, 0) != REG_NOMATCH) {
 					    mmSendTextMessage(mm, phoneNumber, "Going to GPS location (., .).");
 					    goToGPS(message);
 					    mmSendTextMessage(mm, phoneNumber, "Mission accomplished.");
@@ -190,8 +190,7 @@ int main(int argc, char **argv){
 					    // Unsupported/unrecognized commands
 					    mmSendTextMessage(mm, phoneNumber, "Unrecognized command.");
 				      }
-				}
-				
+				}			      
 			}
 			// mmDeleteTextMessage(mm, messageIds[5]);
 			count = newCount;
