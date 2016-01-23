@@ -140,7 +140,6 @@ int mmCheckForConnection(struct ModemInterface *interf) {
 	while (!done)
 	{
 		mmSendCommand(interf, "AT+CREG?");
-#endif
 		if (mmFind(interf->modem, "0,")) {
 			char test = mmPeek(interf->modem);
 			if (test == '5' || test == '1'){
@@ -153,7 +152,6 @@ int mmCheckForConnection(struct ModemInterface *interf) {
 				done = true;
 			}
 		}
-#ifdef _WIN32
 	}
 #endif
 	return 0;

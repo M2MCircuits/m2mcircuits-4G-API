@@ -84,7 +84,8 @@ int mmSocketAvail(struct ModemInterface *iface, int sid){
 	if( c != 'U') {
 		return -1; //error
 	}
-	for(int i = 0; i < 8; i++){ //skip past SORD: #,
+	int i;
+	for(i = 0; i < 8; i++){ //skip past SORD: #,
 		if(mmRead(iface->modem) < 0){
 			i--;
 			continue;
@@ -198,7 +199,8 @@ int mmDirectLinkRead(struct ModemInterface *iface, char *buff, int count){
 	if(!iface->dlmode) return -1; //error
 	int read = mmReadBytes(iface->modem, buff, count);
 	//since there are no prefixes, we don't need a full KMP here
-	for(int i = 0; i < read; i++){
+	int i;
+	for(i = 0; i < read; i++){
 		if(disconnectBuffer[iface->disconnectIndex] == buff[i]) iface->disconnectIndex++;
 		else{
 			iface->disconnectIndex = buff[i] == 'D'; //if no match, check if it's the first character

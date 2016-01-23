@@ -341,7 +341,8 @@ bool mmFind(struct ModemStream *modem, char* target) {
 		int len = strlen(target);
 		char *overlap = alloca(len);
 		overlap[0] = 0;
-		for(int i = 0; i < len; i++){
+		int i;
+		for(i = 0; i < len; i++){
 			overlap[i+1] = overlap[i] + 1;
 			while(overlap[i+1] > 0 && target[i] != target[overlap[i+1]-1])
 				overlap[i+1] = overlap[overlap[i+1]-1]+1;
@@ -446,8 +447,9 @@ int mmReadBytes(struct ModemStream *modem, char* buffer, int length) {
 			++buffer;
 			temp++;
 		}
-		for(int i = 0; i < length; i++){
-			c = mmRead(modem);
+		int i;
+		for(i = 0; i < length; i++){
+			int c = mmRead(modem);
 			if(c < 0) return i;
 			buffer[i] = (char)c;
 			temp++;
@@ -462,7 +464,8 @@ int mmReadBytesUntil(struct ModemStream *modem, char target, char* buffer, int l
 	#endif
 	#ifdef LINUX
 		int c;
-		for(int i = 0; i < length; i++){
+		int i;
+		for(i = 0; i < length; i++){
 			c = mmRead(modem);
 			if(c < 0) return i;
 			if(c == target) return i;
