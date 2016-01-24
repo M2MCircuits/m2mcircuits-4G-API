@@ -74,9 +74,9 @@ int getTextLists(struct ModemInterface* interf, int* ids, int length) {
 
 int retrieveTextMessage(struct ModemInterface* interf, char* buffer, int length, int id) {
 #if defined(LINUX) || defined(ARDUINO)
-	mmSendCommand(interf, F("AT+CMGR="))
+	mmSendCommand(interf, F("AT+CMGR="));
 	mmSendCommand(interf, id);
-	mmSendCommand(interf, F("\r"))
+	mmSendCommand(interf, F("\r"));
 	if (mmFind(interf->modem, F("+CMGR: "))) {
 		mmFind(interf->modem, F(","));
 		mmFind(interf->modem, F(","));

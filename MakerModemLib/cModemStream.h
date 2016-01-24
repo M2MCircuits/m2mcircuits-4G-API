@@ -99,10 +99,9 @@ int mmPrint(struct ModemStream* modem, char* buffer);
 int mmPrinti(struct ModemStream* modem, int num);
 bool mmFlush(struct ModemStream* modem);
 bool mmFind(struct ModemStream* modem, char* target);
-//bool mmFindUntil(struct ModemStream* modem, char* target, char* term);
 char mmPeek(struct ModemStream* modem);
 int mmReadBytes(struct ModemStream* modem, char* buffer, int length);
 int mmReadBytesUntil(struct ModemStream* modem, char target, char* buffer, int length);
 long mmParseInt(struct ModemStream* modem);
-
+//bool mmFindUntil(struct ModemStream* modem, char* target, char* term);
 #endif
