@@ -1,4 +1,4 @@
-#include "cInet.c"
+#include "cInet.h"
 
 int main(){
 	struct ModemInterface *mm = mmCreate(mm);
