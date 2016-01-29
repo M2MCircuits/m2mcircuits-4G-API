@@ -1,0 +1,1 @@
+gcc -DLINUX -c *.c
