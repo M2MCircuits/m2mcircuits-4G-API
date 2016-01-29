@@ -4,8 +4,8 @@
 #ifdef ARDUINO
 struct ModemInterface *mmCreate(Stream * device)
 {
-	struct ModemInterface *iface = new ModemInterface();
-	iface->modem = new ModemStream();
+	struct ModemInterface *iface = (ModemInterface*) malloc(sizeof(struct ModemInterface));
+	iface->modem = (ModemStream*) malloc(sizeof(struct ModemStream));
 	iface->modem->stream = device;
 	return iface;
 }
@@ -23,7 +23,6 @@ struct ModemInterface *mmCreate(char * blk)
 }
 #endif
 #ifdef _WIN32
-
 struct ModemInterface *mmCreate(char * blk)
 {
 	struct ModemInterface *iface = malloc(sizeof(struct ModemInterface)); //new ModemInterface();
@@ -35,141 +34,84 @@ struct ModemInterface *mmCreate(char * blk)
 
 
 //initialization of modem - returns true if all commands completed successfully, false otherwise
-int mmInit(struct ModemInterface *interf) {
-	int i = 0;				//command counter
-	int j = 0;				//retry counter
-	
-	#ifdef LINUX
+bool mmInit(struct ModemInterface *interf) {
 	sleep_seconds(3);
 	mmSendCommand(interf, F("+++"));
 	sleep_seconds(1);
 	interf->dlmode = 0;
 	interf->disconnectIndex = 0;
+	int i = 0;				//command counter
 	mmFlushBuffer(interf);
-	#endif
-	#ifdef ARDUINO
-	delay(3000);
-	mmSendCommand(interf, F("+++"));
-	delay(1000);
-	interf->dlmode = 0;
-	interf->disconnectIndex = 0;
-	mmFlushBuffer(interf);
-	#endif
-	#ifdef _WIN32
-	Sleep(300);
-	mmSendCommand(interf, "+++");
-	Sleep(100);
-	interf->dlmode = 0;
-	interf->disconnectIndex = 0;
-	//mmFlushBuffer(interf);
-	#endif
-
-#if defined(LINUX) || defined(ARDUINO)
 	for(i = 0; i < 3; i++){
 		mmSendCommand(interf, F("AT\r"));
 	}
 	mmFind(interf->modem, F("OK"));
 	mmFlushBuffer(interf);
-#endif
-#ifdef _WIN32
-	mmSendCommand(interf, "AT\r");
-	mmFind(interf->modem, "OK");
-	//mmFlush(interf->modem);
-#endif
 	i = 0;
-	while (i < 5 && j < 10) {
+	int j = 0;				//retry counter
+	while (i < 6 && j < 10) {
 		switch(i) {
 			case 0:
-#if defined(LINUX) || defined(ARDUINO)
 				(mmSendCommandCheckForOkay(interf, F("ATE1")))?i++:j++; 
-#endif
-#ifdef _WIN32
-				(mmSendCommandCheckForOkay(interf, "ATE1")) ? i++ : j++;
-#endif
 				break;
 			case 1:
-#if defined(LINUX) || defined(ARDUINO)
 				(mmSendCommandCheckForOkay(interf, F("AT+CMEE=0"))) ? i++ : j++;
-#endif
-#ifdef _WIN32
-				(mmSendCommandCheckForOkay(interf, "AT+CMEE=0")) ? i++ : j++;
-#endif
 				break;
 			case 2:
-#if defined(LINUX) || defined(ARDUINO)
 				(mmSendCommandCheckForOkay(interf, F("AT+UMNOCONF=3,23"))) ? i++ : j++;
-#endif
-#ifdef _WIN32
-				(mmSendCommandCheckForOkay(interf, "AT+UMNOCONF=3,23")) ? i++ : j++;
-#endif
 				break;
 			case 3:
-#if defined(LINUX) || defined(ARDUINO)
 				(mmSendCommandCheckForOkay(interf, F("AT+CFUN=1"))) ? i++ : j++;
-#endif
-#ifdef _WIN32
-				(mmSendCommandCheckForOkay(interf, "AT+CFUN=1")) ? i++ : j++;
-#endif	
 				break;
 			case 4:
-#if defined(LINUX) || defined(ARDUINO)
 				(mmSendCommandCheckForOkay(interf, F("AT+CMGF=1"))) ? i++ : j++;
-#endif
-#ifdef _WIN32
-				(mmSendCommandCheckForOkay(interf, "AT+CMGF=1")) ? i++ : j++;
-#endif
-				
+				break;
+			case 5:
+				(mmSendCommandCheckForOkay(interf, F("AT+CSDH=1"))) ? i++ : j++; //for text message length
 				break;
 		}
 		#ifdef ARDUINO
 			//delay(250);
 		#endif
 	}
-	mmFlush(interf->modem);
-	return (i == 5) ? 1 : 0;
+	return (i == 6) ? true : false;
 }
 
 //Checks for NetworkConnection
-int mmCheckForConnection(struct ModemInterface *interf) {
-#if defined(LINUX) || defined(ARDUINO)
-	mmSendCommand(interf, F("AT+CREG?"));
-#endif
-#ifdef _WIN32
-	bool done = false;
-	int result = 0;
-	while (!done)
-	{
-		mmSendCommand(interf, "AT+CREG?");
-		if (mmFind(interf->modem, "0,")) {
-			char test = mmPeek(interf->modem);
-			if (test == '5' || test == '1'){
-				result = 1;
-				done = true;
-			}
-			else
-			{
-				result = 0;
-				done = true;
-			}
+bool mmCheckForConnection(struct ModemInterface *interface) {
+	mmSendCommand(interface, F("AT+CREG?\r"));
+	if (mmFindChar(interface->modem, '0')) {
+		mmRead(interface->modem);
+		char test = mmPeek(interface->modem);
+		if (test == '5' || test == '1'){
+			return true;
 		}
 	}
-#endif
-	return 0;
+	return false;
 }
 
+//Checks for NetworkConnection
+bool mmCheckForOkay(struct ModemInterface *interface) {
+	while (mmFindChar(interface->modem, 'O')) {
+		char test = mmPeek(interface->modem);
+		if (test == 'K'){
+			return true;
+		}
+	}
+	return false;
+}
+
+
 //auto checks for OK from data after sending command
-int mmSendCommandCheckForOkay(struct ModemInterface* interf, char* cmd) {
-	#ifdef ARDUINO
+bool mmSendCommandCheckForOkay(struct ModemInterface* interf, char* cmd) {
 	mmFlushBuffer(interf);
 	mmSendCommand(interf,cmd);
 	mmSendCommand(interf,"\r");
-	mmFind(interf->modem, cmd);
-	return mmFind(interf->modem, F("OK"));
+	#ifdef ARDUINO
+	//mmFind(interf->modem, cmd);
+	return mmCheckForOkay(interf);
 	#endif
 	#ifdef LINUX
-	mmFlushBuffer(interf);
-	mmSendCommand(interf,cmd);
-	mmSendCommand(interf,"\r");
 	int c;
 	mmFind(interf->modem, cmd);
 	do{
@@ -182,30 +124,29 @@ int mmSendCommandCheckForOkay(struct ModemInterface* interf, char* cmd) {
 	} while(c != 'O' && c != 'E');
 	return c == 'O';
 	#endif
-#ifdef _WIN32
-	char c;
-	PurgeComm(interf->modem->hSerial, PURGE_RXCLEAR | PURGE_TXCLEAR);
-	mmSendCommand(interf, cmd);
-	mmSendCommand(interf, "\r");
+	#ifdef _WIN32
+	int c;
 	mmFind(interf->modem, cmd);
 	do{
-		c = (char)mmRead(interf->modem);
+		c = mmRead(interf->modem);
 		if(c < 0){
-			Sleep(1);
+			usleep(1);
+		}else{
+			//printf("%c", c);
 		}
 	} while(c != 'O' && c != 'E');
 	return c == 'O';
-#endif
+	#endif
 }
 
 #ifdef ARDUINO
 //auto checks for OK from data after sending command
-int mmSendCommandCheckForOkay(struct ModemInterface* interf, FlashStringHelper cmd) {
-	mmFlush(interf->modem);
-	mmSendCommand(interf,cmd);
-	mmSendCommand(interf,"\r");
-	mmFind(interf->modem, cmd);
-	return mmFind(interf->modem, F("OK"));
+bool mmSendCommandCheckForOkay(struct ModemInterface* interface, FlashStringHelper cmd) {
+	mmFlush(interface->modem);
+	mmSendCommand(interface,cmd);
+	mmSendCommand(interface,"\r");
+	mmFind(interface->modem, cmd);
+	return mmCheckForOkay(interface);
 }
 #endif
 
@@ -231,12 +172,8 @@ void mmFlushBuffer(struct ModemInterface* interf) {
 			mmRead(interf->modem);
 	#endif
 	#ifdef LINUX
-		//mmFlush(interf->modem);
-		/*printf("%i\n", mmAvailable(interf->modem));*/
-		//printf("Begin flush:\n");
 		while (mmAvailable(interf->modem))
 			(mmRead(interf->modem));
-		//printf("\nend flush: \n");
 		
 	#endif
 	#ifdef _WIN32
@@ -264,4 +201,15 @@ void mmLogDebug(char* debug, int priority) {
 		syslog (LOG_ERR,debug);
 	}
 	#endif
+}
+
+
+
+int testSwig(char *buffer, int length){
+	printf("%d\n", length);
+	for(int i = 0; i < 10; i++){
+		buffer[i] = 'a' + i;
+	}
+	buffer[10] = 0;
+	return 10;
 }

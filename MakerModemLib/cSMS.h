@@ -8,13 +8,14 @@
 #include <string.h>
 
 #include "cModemInterface.h"
-#include "cModemStream.h"
 
-int sendTextMessage(struct ModemInterface* interf, char * number, char* buffer);
-int getTextLists(struct ModemInterface* interf, int* ids, int length);
-int retrieveTextMessage(struct ModemInterface* interf, char* buffer, int length, int id);
-int retrievePhoneNumber(struct ModemInterface* interf, char* buffer, int length, int id);
-int retrieveTimestamp(struct ModemInterface* interf, char* buffer, int length, int id);
-int deleteTextMessage(struct ModemInterface* interf, int id);
+//extern int milliTimeoutSMS = 50;
+
+bool mmSendTextMessage(struct ModemInterface* interface, char *num, char* buffer);
+int mmGetTextLists(struct ModemInterface* interface, int* ids, int length);
+int mmRetrieveTextMessage(struct ModemInterface* interface, char* buffer, int length, int id);
+bool mmRetrievePhoneNumber(struct ModemInterface* interface, char* buffer, int length, int id);
+bool mmRetrieveTimestamp(struct ModemInterface* interface, char* buffer, int length, int id);
+bool mmDeleteTextMessage(struct ModemInterface* interface, int id);
 
 #endif
