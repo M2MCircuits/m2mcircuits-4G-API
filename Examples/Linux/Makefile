@@ -1,1 +1,2 @@
-gcc -DLINUX -c *.c
+all:
+	gcc -DLINUX -c *.c

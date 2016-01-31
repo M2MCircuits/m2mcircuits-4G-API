@@ -12,8 +12,9 @@ int main(int argc, char **argv){
 	char number[11];
 	char message[180];
 	printf("deleting %i messages..\n", count);
-	for(int i = 0; i < count; i++){
-		mmDeleteMessage(mm, messageids[i]);
+	int i;
+	for(i = 0; i < count; i++){
+		mmDeleteTextMessage(mm, messageids[i]);
 		//printf("Message from %s:\n%s\n", number, message);
 	}
 	

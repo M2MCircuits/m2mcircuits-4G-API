@@ -1,6 +1,6 @@
 #include "cSMS.h"
 
-int sendTextMessage(struct ModemInterface* interf, char* number, char* buffer) {
+int mmSendTextMessage(struct ModemInterface* interf, char* number, char* buffer) {
 #if defined(LINUX) || defined(ARDUINO)
 	mmSendCommand(interf, F("AT+CMGS=\""));
 	mmSendCommand(interf, number);
@@ -29,7 +29,7 @@ int sendTextMessage(struct ModemInterface* interf, char* number, char* buffer) {
 #endif
 }
 
-int getTextLists(struct ModemInterface* interf, int* ids, int length) {
+int mmGetTextLists(struct ModemInterface* interf, int* ids, int length) {
 	int i = 0;
 	int temp, j;
 #if defined(LINUX) || defined(ARDUINO)
@@ -72,7 +72,7 @@ int getTextLists(struct ModemInterface* interf, int* ids, int length) {
 	return i;
 }
 
-int retrieveTextMessage(struct ModemInterface* interf, char* buffer, int length, int id) {
+int mmRetrieveTextMessage(struct ModemInterface* interf, char* buffer, int length, int id) {
 #if defined(LINUX) || defined(ARDUINO)
 	mmSendCommand(interf, F("AT+CMGR="));
 	mmSendCommand(interf, id);
@@ -101,7 +101,7 @@ int retrieveTextMessage(struct ModemInterface* interf, char* buffer, int length,
 #endif
 }
 
-int retrievePhoneNumber(struct ModemInterface* interf, char* buffer, int length, int id) {
+int mmRetrievePhoneNumber(struct ModemInterface* interf, char* buffer, int length, int id) {
 #if defined(LINUX) || defined(ARDUINO)
 	mmSendCommand(interf, F("AT+CMGR="));
 	mmSendCommand(interf, id);
@@ -159,7 +159,7 @@ int retrieveTimestamp(struct ModemInterface* interf, char* buffer, int length, i
 #endif
 }
 
-int deleteTextMessage(struct ModemInterface* interf, int id) {
+int mmDeleteTextMessage(struct ModemInterface* interf, int id) {
 #if defined(LINUX) || defined(ARDUINO)
 	mmSendCommand(interf, F("AT+CMGD="));
 	mmSendCommand(interf, id);

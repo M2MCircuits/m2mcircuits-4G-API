@@ -1,7 +1,7 @@
 #include "cInet.h"
 
 int main(){
-	struct ModemInterface *mm = mmCreate(mm);
+	struct ModemInterface *mm = mmCreate("/dev/ttyACM0"); //linux
 	if(mmInit(mm)){
 		if(mmInitGPRS(mm)){
 			printf("Successfully initialized.\n");
