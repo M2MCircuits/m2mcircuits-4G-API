@@ -1,6 +1,6 @@
 #include "cInet.h"
 
-bool mmIsInternetAttached(struct ModemInterface *iface) {
+bool mmIsGPRSAttached(struct ModemInterface *iface) {
 	mmFlushBuffer(iface);
 	mmPrint(iface->modem, F("AT+UPSND=0,8\r"));
 	mmFind(iface->modem, F("AT+UPSND=0,8\r"));
@@ -9,7 +9,7 @@ bool mmIsInternetAttached(struct ModemInterface *iface) {
 	}
 }
 bool mmAttachGPRS(struct ModemInterface *iface){
-	if(mmIsInternetAttached(iface)) return true;
+	if(mmIsGPRSAttached(iface)) return true;
 	mmFlushBuffer(iface);
 	//load saved profile
 	if(!mmSendCommandCheckForOkay(iface, F("AT+UPSDA=0,2"))) return false;
@@ -84,8 +84,7 @@ int mmSocketAvail(struct ModemInterface *iface, int sid){
 	if( c != 'U') {
 		return -1; //error
 	}
-	int i;
-	for(i = 0; i < 8; i++){ //skip past SORD: #,
+	for(int i = 0; i < 8; i++){ //skip past SORD: #,
 		if(mmRead(iface->modem) < 0){
 			i--;
 			continue;
@@ -199,8 +198,7 @@ int mmDirectLinkRead(struct ModemInterface *iface, char *buff, int count){
 	if(!iface->dlmode) return -1; //error
 	int read = mmReadBytes(iface->modem, buff, count);
 	//since there are no prefixes, we don't need a full KMP here
-	int i;
-	for(i = 0; i < read; i++){
+	for(int i = 0; i < read; i++){
 		if(disconnectBuffer[iface->disconnectIndex] == buff[i]) iface->disconnectIndex++;
 		else{
 			iface->disconnectIndex = buff[i] == 'D'; //if no match, check if it's the first character

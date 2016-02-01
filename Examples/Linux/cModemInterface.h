@@ -35,9 +35,10 @@ struct ModemInterface * mmCreate(char* blkdvc);
 #endif
 
 
-int mmInit(struct ModemInterface* interf);
-int mmCheckForConnection(struct ModemInterface* interf);
-int mmSendCommandCheckForOkay(struct ModemInterface* interf, char* cmd);
+bool mmInit(struct ModemInterface* interf);
+bool mmCheckForConnection(struct ModemInterface* interf);
+bool mmCheckForOkay(struct ModemInterface* interface);
+bool mmSendCommandCheckForOkay(struct ModemInterface* interf, char* cmd);
 void mmSendCommand(struct ModemInterface* interf, char* cmd);
 //void mmSendCommand(struct ModemInterface* interf, int cmd);
 int mmGetResponse(struct ModemInterface* interf, char* buffer, int length);
