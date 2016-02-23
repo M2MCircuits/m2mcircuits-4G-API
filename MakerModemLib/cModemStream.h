@@ -1,3 +1,20 @@
+/*
+    This file is part of the MakerModem API.
+
+    The MakerModem API is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    The MakerModem API is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with the MakerModem API.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 /* Modem Stream class
  * Handles low-level stream interactions for modem
  * #define [MICROCONTROLLER] before including ModemStream.h
@@ -6,6 +23,13 @@
 
 #ifndef MODEMSTREAM
 #define MODEMSTREAM
+
+#include <stdbool.h>
+
+#ifdef LAUNCHPAD
+#include <string.h>
+#include <stdbool.h>
+#endif
 
 #ifdef ARDUINO
 #include <SoftwareSerial.h>
@@ -28,9 +52,7 @@
 #include <linux/serial.h>
 #include <syslog.h>
 #define F(str) str
-typedef int bool;
-#define true 1
-#define false 0
+#include <stdbool.h>
 
 
 static int rate_to_constant(int baudrate) {
@@ -44,9 +66,10 @@ static int rate_to_constant(int baudrate) {
 	default: return 0;
 	}
 #undef B
-}    
-void sleep_seconds(int seconds);
+}   
 #endif
+void sleep_seconds(int seconds);
+void sleep_millis(int millis);
 
 
 #ifdef _WIN32
@@ -55,12 +78,18 @@ void sleep_seconds(int seconds);
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#define F(str) str
 #endif
 
 
 
 
 struct ModemStream {
+	#ifdef LAUNCHPAD
+	/*
+	 * TODO: Launchpad
+	 */
+	#endif
 	#ifdef ARDUINO
 	Stream* stream;
 	#endif
@@ -73,7 +102,7 @@ struct ModemStream {
 	HANDLE hSerial; //Serial comm handler
 	COMSTAT status; //Get various info about the connection;
 	DWORD errors; //keep track of last error
-	//LPCWSTR port;
+	LPCWSTR port;
 	bool connected;
 	char peekChar;
 	bool peeked;
@@ -87,8 +116,13 @@ bool mmFind(struct ModemStream* modem, FlashStringHelper target);
 #ifdef LINUX
 int mmCommInit(const char * device, int rate);
 #endif
+#ifdef LAUNCHPAD
+/*
+* TODO: Launchpad
+*/
+#endif
 #ifdef _WIN32
-int mmCommInit(const char * portname, struct ModemStream* modem);
+int mmCommInit(const char * portnamem, struct ModemStream* modem);
 #endif
 
 int mmAvailable(struct ModemStream* modem);
@@ -97,11 +131,15 @@ int mmWrite(struct ModemStream* modem, char *buffer, int bytes);
 int mmWriteByte(struct ModemStream* modem, char buffer);
 int mmPrint(struct ModemStream* modem, char* buffer);
 int mmPrinti(struct ModemStream* modem, int num);
-bool mmFlush(struct ModemStream* modem);
+void mmFlush(struct ModemStream* modem);
+char mmFindChars(struct ModemStream *modem, char a, char b);
 bool mmFind(struct ModemStream* modem, char* target);
+bool mmFindChar(struct ModemStream *modem, char c);
+//bool mmFindUntil(struct ModemStream* modem, char* target, char* term);
 char mmPeek(struct ModemStream* modem);
 int mmReadBytes(struct ModemStream* modem, char* buffer, int length);
 int mmReadBytesUntil(struct ModemStream* modem, char target, char* buffer, int length);
 long mmParseInt(struct ModemStream* modem);
-//bool mmFindUntil(struct ModemStream* modem, char* target, char* term);
+
+
 #endif
