@@ -77,29 +77,29 @@ unsigned char recieved_data_buffer_bytes [30];
 extern void sayHi();
 int main(void)
 {
-    //start Maker Modem stuff
+    	//start Maker Modem stuff
 	bufferindex = 0;
 	//end Maker Modem Stuff
 
-	  WDTCTL = WDTPW + WDTHOLD;                 // Stop WDT
-	  if (CALBC1_1MHZ==0xFF)					// If calibration constant erased
-	  {
-		while(1);                               // do not load, trap CPU!!
-	  }//this makes sure the dco (built in internal oscillator) is running at the correct clock frequency
+	WDTCTL = WDTPW + WDTHOLD;                 // Stop WDT
+	if (CALBC1_1MHZ==0xFF)			// If calibration constant erased
+	{
+	while(1);                               // do not load, trap CPU!!
+	}//this makes sure the dco (built in internal oscillator) is running at the correct clock frequency
 
 
-    DCOCTL = 0;                               // Select lowest DCOx and MODx settings
-    BCSCTL1 = CALBC1_1MHZ;                    // Set DCO
-    DCOCTL = CALDCO_1MHZ;
-
-    P1SEL = BIT1 + BIT2;// + BIT4;               // P1.1 = RXD, P1.2=TXD
-    P1SEL2 = BIT1 + BIT2;                     // P1.4 = SMCLK, others GPIO
-    UCA0CTL1 |= UCSSEL_2;                     // SMCLK
-    UCA0BR0 = 8;                              // 1MHz 115200
-    UCA0BR1 = 0;                              // 1MHz 115200
-    UCA0MCTL = UCBRS2 + UCBRS0;               // Modulation UCBRSx = 5
-    UCA0CTL1 &= ~UCSWRST;                     // **Initialize USCI state machine**
-    IE2 |= UCA0RXIE;                          // Enable USCI_A0 RX interrupt
+	DCOCTL = 0;                               // Select lowest DCOx and MODx settings
+	BCSCTL1 = CALBC1_1MHZ;                    // Set DCO
+	DCOCTL = CALDCO_1MHZ;
+	
+	P1SEL = BIT1 + BIT2;// + BIT4;               // P1.1 = RXD, P1.2=TXD
+	P1SEL2 = BIT1 + BIT2;                     // P1.4 = SMCLK, others GPIO
+	UCA0CTL1 |= UCSSEL_2;                     // SMCLK
+	UCA0BR0 = 8;                              // 1MHz 115200
+	UCA0BR1 = 0;                              // 1MHz 115200
+	UCA0MCTL = UCBRS2 + UCBRS0;               // Modulation UCBRSx = 5
+	UCA0CTL1 &= ~UCSWRST;                     // **Initialize USCI state machine**
+	IE2 |= UCA0RXIE;                          // Enable USCI_A0 RX interrupt
 
 	while (!(IFG2&UCA0TXIFG));                // USCI_A0 TX buffer ready?
 		  UCA0TXBUF = 'A';                    		// take the data byte and transmit out UART at 115kbaud
@@ -115,11 +115,11 @@ int main(void)
 	while (!(IFG2&UCA0TXIFG));                // USCI_A0 TX buffer ready?
 		  UCA0TXBUF = 'T';                    		// take the data byte and transmit out UART at 115kbaud
 
-    while(1);
-  //__bis_SR_register(LPM0_bits + GIE);       // Enter Low Power Mode 0, interrupts enabled
-  __bis_SR_register(GIE);       // interrupts enabled
+	while(1);
+	//__bis_SR_register(LPM0_bits + GIE);       // Enter Low Power Mode 0, interrupts enabled
+	__bis_SR_register(GIE);       // interrupts enabled
 
-	  sayHi();
+	sayHi();
 }
 
 // Echo back RXed character, confirm TX buffer is ready first
