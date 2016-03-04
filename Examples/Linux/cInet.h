@@ -2,6 +2,8 @@
 #define C_MMINET_H
 #include "cModemInterface.h"
 
+//Set the APN
+bool mmSetAPN(struct ModemInterface *iface, char apnname[]);
 //Check if device is connected to the internet.
 bool mmIsGPRSAttached(struct ModemInterface *iface);
 //Connect device to the internet
