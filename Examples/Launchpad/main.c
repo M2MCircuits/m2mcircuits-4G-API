@@ -69,10 +69,14 @@
 //should be #include <msp430g2553.h> ??
 
 //Maker Stuff
+//#include "custombaud.h"
 #define firstCommand "ATE1" //4 times
 #define secondCommand "AT"  // 2 times
+#define deleteCommand "AT+CMGD=1,1" //deletes all text messages
+
 unsigned int bufferindex;
 unsigned char recieved_data_buffer_bytes [30];
+
 //end Maker Stuff
 extern void sayHi();
 int main(void)
@@ -82,33 +86,36 @@ int main(void)
 	//end Maker Modem Stuff
 
 	WDTCTL = WDTPW + WDTHOLD;                 // Stop WDT
-	if (CALBC1_1MHZ==0xFF)			// If calibration constant erased
-	{
-	while(1);                               // do not load, trap CPU!!
-	}//this makes sure the dco (built in internal oscillator) is running at the correct clock frequency
+	  if (CALBC1_1MHZ==0xFF)					// If calibration constant erased
+	  {
+	    while(1);                               // do not load, trap CPU!!
+	  }
+	  DCOCTL = 0;                               // Select lowest DCOx and MODx settings
+	  BCSCTL1 = CALBC1_1MHZ;                    // Set DCO
+	  DCOCTL = CALDCO_1MHZ;
+	  P1SEL = BIT1 + BIT2 ;                     // P1.1 = RXD, P1.2=TXD
+	  P1SEL2 = BIT1 + BIT2;
+	  UCA0CTL1 |= UCSSEL_2;                     // SMCLK
+	  UCA0BR0 = 8;                              // 1MHz 115200
+	  UCA0BR1 = 0;                              // 1MHz 115200
+	  UCA0MCTL = UCBRS2 + UCBRS0;               // Modulation UCBRSx = 5
+	  UCA0CTL1 &= ~UCSWRST;                     // **Initialize USCI state machine**
+	  IE2 |= UCA0RXIE;                          // Enable USCI_A0 RX interrupt
 
+	  //__bis_SR_register(LPM0_bits + GIE);       // Enter LPM0, interrupts enabled
+	  __bis_SR_register(GIE);       // Enter LPM0, interrupts enabled
 
-	DCOCTL = 0;                               // Select lowest DCOx and MODx settings
-	BCSCTL1 = CALBC1_1MHZ;                    // Set DCO
-	DCOCTL = CALDCO_1MHZ;
-	
-	P1SEL = BIT1 + BIT2;// + BIT4;               // P1.1 = RXD, P1.2=TXD
-	P1SEL2 = BIT1 + BIT2;                     // P1.4 = SMCLK, others GPIO
-	UCA0CTL1 |= UCSSEL_2;                     // SMCLK
-	UCA0BR0 = 8;                              // 1MHz 115200
-	UCA0BR1 = 0;                              // 1MHz 115200
-	UCA0MCTL = UCBRS2 + UCBRS0;               // Modulation UCBRSx = 5
-	UCA0CTL1 &= ~UCSWRST;                     // **Initialize USCI state machine**
-	IE2 |= UCA0RXIE;                          // Enable USCI_A0 RX interrupt
-
-	while (!(IFG2&UCA0TXIFG));                // USCI_A0 TX buffer ready?
-		  UCA0TXBUF = 'A';                    		// take the data byte and transmit out UART at 115kbaud
-	while (!(IFG2&UCA0TXIFG));                // USCI_A0 TX buffer ready?
-		  UCA0TXBUF = 'T';                    		// take the data byte and transmit out UART at 115kbaud
-	while (!(IFG2&UCA0TXIFG));                // USCI_A0 TX buffer ready?
-		  UCA0TXBUF = 'E';                    		// take the data byte and transmit out UART at 115kbaud
-	while (!(IFG2&UCA0TXIFG));                // USCI_A0 TX buffer ready?
-		  UCA0TXBUF = '1';                    		// take the data byte and transmit out UART at 115kbaud
+	  /*unsigned char string[20];
+	  strcpy(string, deleteCommand);
+	  unsigned int i;
+	  unsigned int x = sizeof(string);
+		for(i=0; i<x; i++){
+			while (!(IFG2&UCA0TXIFG));                // USCI_A0 TX buffer ready?
+			UCA0TXBUF = string[i];                    // take the data byte and transmit out UART at 115kbaud
+		}
+		while(1);*/
+	  
+	while(1);
 
 	while (!(IFG2&UCA0TXIFG));                // USCI_A0 TX buffer ready?
 		  UCA0TXBUF = 'A';                    		// take the data byte and transmit out UART at 115kbaud
@@ -116,10 +123,8 @@ int main(void)
 		  UCA0TXBUF = 'T';                    		// take the data byte and transmit out UART at 115kbaud
 
 	while(1);
-	//__bis_SR_register(LPM0_bits + GIE);       // Enter Low Power Mode 0, interrupts enabled
-	__bis_SR_register(GIE);       // interrupts enabled
 
-	sayHi();
+	//sayHi();
 }
 
 // Echo back RXed character, confirm TX buffer is ready first
@@ -147,6 +152,13 @@ void __attribute__ ((interrupt(USCIAB0RX_VECTOR))) USCI0RX_ISR (void)
 /*
  * 		CODE FOR MAKER MODEM BELOW THIS LINE
  */
+
+/*void transmit_uart(const char *value) {
+    for(int i = 0; value[i] != '\0'; i++) {
+    	while (!(IFG2&UCA0TXIFG)) {}                // USCI_A0 TX buffer ready?
+    		UCA0TXBUF = value[i];
+    }
+}*/
 
 #define LAUNCHPAD
 #include <stdio.h>
