@@ -6,6 +6,8 @@
 bool mmIsGPRSAttached(struct ModemInterface *iface);
 //Connect device to the internet
 bool mmAttachGPRS(struct ModemInterface *iface);
+//Set the APN
+bool mmSetAPN(struct ModemInterface *iface, char apnname[]);
 //First time internet configuration (run at least once, but multiple times does not hurt).
 bool mmInitGPRS(struct ModemInterface *iface);
 
