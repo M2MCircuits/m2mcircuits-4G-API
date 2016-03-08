@@ -2,10 +2,13 @@
 #define C_MMINET_H
 #include "cModemInterface.h"
 
+
 //Check if device is connected to the internet.
 bool mmIsGPRSAttached(struct ModemInterface *iface);
 //Connect device to the internet
 bool mmAttachGPRS(struct ModemInterface *iface);
+//Set the APN
+bool mmSetAPN(struct ModemInterface *iface, char apnname[]);
 //First time internet configuration (run at least once, but multiple times does not hurt).
 bool mmInitGPRS(struct ModemInterface *iface);
 
@@ -22,8 +25,6 @@ void mmSocketClose(struct ModemInterface *iface, int sid);
 int mmSocketWriteBytes(struct ModemInterface *iface, int sid, char *buff, int len);
 //write string
 int mmSocketWrite(struct ModemInterface *iface, int sid, char *buff);
-//write character
-int mmSocketWriteC(struct ModemInterface *iface, int sid, char c);
 //read bytes, returns number of bytes read
 int mmSocketRead(struct ModemInterface *iface, int sid, char *buff, int maxlen);
 
