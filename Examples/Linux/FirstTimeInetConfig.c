@@ -1,9 +1,10 @@
-#include "cInet.c"
+#include "cInet.h"
 
 int main(){
-	struct ModemInterface *mm = mmCreate(mm);
+	struct ModemInterface *mm = mmCreate("/dev/ttyACM0");
 	if(mmInit(mm)){
-		if(mmInitGPRS(mm)){
+		char apnName[] = "\"so01.vzwstatic\""; //change to desired APN
+		if(mmSetAPN(mm, apnName) && mmInitGPRS(mm)){
 			printf("Successfully initialized.\n");
 			free(mm);
 			return 0;
@@ -14,7 +15,7 @@ int main(){
 		}
 	}else{
 		printf("Unable to initialize connection to modem.\n");
-		free(mm);
+		free(mm);	
 		return -1;
 	}
 }
