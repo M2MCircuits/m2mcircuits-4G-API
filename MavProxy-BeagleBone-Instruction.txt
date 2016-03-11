@@ -22,3 +22,13 @@
    - Note letter O, not zero
    - --console to open console, --map to open map
    - For more startup options: http://dronecode.github.io/MAVProxy/html/getting_started/starting.html
+
+4. Using NSH to use GPS on BB without laptop
+   - Once mavproxy is started, load the NSH module:
+   MAV> module load nsh
+   - Start NSH
+   MAV> nsh start
+   - Test the GPS functionality 
+   nsh> gps start -m all
+   - Check the GPS unit status
+   nsh> gps status
