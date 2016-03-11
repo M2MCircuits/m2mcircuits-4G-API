@@ -10,7 +10,7 @@
            cape_disable=capemgr.enable_partno=BB-UART1
    - Save and quit uEnv.txt
    - Run (letter O, not zero). You should see that ttyO1 is not currently enabled
-     ls -l/dev/ttyO*
+     ls -l /dev/ttyO*
    - Reboot the BeagleBone and run ls -l /dev/ttyO* again. Now it should appear that ttyO1 is enabled
    
    NOTE: If you are still only seeing ttyO0 enabled, run the following to enable ttyO1:
