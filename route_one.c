@@ -6,7 +6,7 @@
 
 //IDEAL USAGE:
 //Step 0) "route1" text is read which will call
-//Step 1) c code to get to the MAV> prompt and
+//Step 1) route_one.c which will get to the MAV> prompt and
 //Step 2) issue command "mode auto" from which:
 //Step 2) AUTO> <start c code to issue each of the commands below in route_one>
 
