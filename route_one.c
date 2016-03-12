@@ -2,7 +2,7 @@
 //coordinates can be confirmed on google maps
 
 //COMMANDS:
-//http://planner.ardupilot.com/wiki/common-mavlink-mission-command-messages-mav_cmd/#mav_cmd_nav_takeoff
+//http://planner.ardupilot.com/wiki/common-mavlink-mission-command-messages-mav_cmd/#commands_supported_by_copter
 
 //SOURCE CODE FOR ARDUPILOT/APM:
 //https://github.com/diydrones
