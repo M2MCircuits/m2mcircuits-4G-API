@@ -34,7 +34,7 @@ int main(int argc, char **argv){
 		{MAV_CMD_NAV_LAND, 	 	0,		0,		0,  	0,		0,          0},					//  go back down three feet
 	};
 	
-	//we will issue the commands in Steps 2 and 3
+	//we will issue the commands in Steps 2 and 3 here
 	
 	printf("\nEnd Route 1 Logic\n");
 
