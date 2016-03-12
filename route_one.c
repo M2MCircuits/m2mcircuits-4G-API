@@ -10,6 +10,8 @@
 //Step 3) issue command "mode auto" from which:
 //Step 4) AUTO> <start c code to issue each of the commands below in route_one>
 
+//refresher for c/unix: system("echo 'words' > file"); //c code to do unix stuff
+
 //fly in a square at altitude 3 feet in the north side of the east parking lot of SPN
 //coordinates can be confirmed on google maps
 float route_one[][6] = {
