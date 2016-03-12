@@ -5,10 +5,10 @@
 //https://github.com/diydrones
 
 //IDEAL USAGE:
-//Step 0) "route1" text is read which will call
-//Step 1) route_one.c which will get to the MAV> prompt and
-//Step 2) issue command "mode auto" from which:
-//Step 2) AUTO> <start c code to issue each of the commands below in route_one>
+//Step 1) "route1" text is read which will call
+//Step 2) route_one.c which will get to the MAV> prompt and
+//Step 3) issue command "mode auto" from which:
+//Step 4) AUTO> <start c code to issue each of the commands below in route_one>
 
 //fly in a square at altitude 3 feet in the north side of the east parking lot of SPN
 //coordinates can be confirmed on google maps
