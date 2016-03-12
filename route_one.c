@@ -7,10 +7,12 @@
 //IDEAL USAGE:
 //Step 1) "route1" text is read which will call
 //Step 2) route_one.c which will get to the MAV> prompt and
+		//system("sudo su");
+		//system("echo BB-UART1 > /sys/devices/bone_capemgr.*/slots");
+		//system("sudo mavproxy.py --master=/dev/ttyO1");
 //Step 3) issue command "mode auto" from which:
+		//system("mode auto");
 //Step 4) AUTO> <start c code to issue each of the commands below in route_one>
-
-//refresher for c/unix: system("echo 'words' > file"); //c code to do unix stuff
 
 //fly in a square at altitude 3 feet in the north side of the east parking lot of SPN
 //coordinates can be confirmed on google maps
