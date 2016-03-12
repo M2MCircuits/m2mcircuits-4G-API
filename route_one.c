@@ -1,12 +1,17 @@
-//fly in a square at altitude 3 feet in the north side of the east parking lot of SPN
-//coordinates can be confirmed on google maps
-
 //COMMANDS:
 //http://planner.ardupilot.com/wiki/common-mavlink-mission-command-messages-mav_cmd/#commands_supported_by_copter
 
 //SOURCE CODE FOR ARDUPILOT/APM:
 //https://github.com/diydrones
 
+//IDEAL USAGE:
+//Step 0) "route1" text is read which will call
+//Step 1) c code to get to the MAV> prompt and
+//Step 2) issue command "mode auto" from which:
+//Step 2) AUTO> <start c code to issue each of the commands below in route_one>
+
+//fly in a square at altitude 3 feet in the north side of the east parking lot of SPN
+//coordinates can be confirmed on google maps
 float route_one[][6] = {
 	{MAV_CMD_MISSION_START,  	0, 		0,  	0,  	0,	0, 		  	0}//start in AUTO mode without need to touch the throttle on the controller
 	//	CMD					P1		P2		P3		Alt		Lat			Long
