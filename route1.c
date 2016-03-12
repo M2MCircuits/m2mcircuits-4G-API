@@ -6,7 +6,7 @@
 
 //IDEAL USAGE:
 //Step 1) "route1" text is read which will call
-//Step 2) route_one.c which will get to the MAV> prompt and
+//Step 2) route1.c which will get to the MAV> prompt and
 		//system("sudo su");
 		//system("echo BB-UART1 > /sys/devices/bone_capemgr.*/slots");
 		//system("sudo mavproxy.py --master=/dev/ttyO1");
