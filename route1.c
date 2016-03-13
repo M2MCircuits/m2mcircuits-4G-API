@@ -27,7 +27,7 @@ int main(int argc, char **argv){
 		{MAV_CMD_NAV_WAYPOINT, 	0, 		0,		0,  	3.0, 	32.994696, -96.751528},			//  north-east corner
 		{MAV_CMD_NAV_WAYPOINT, 	0, 		0,		0,  	3.0, 	32.994696, -96.751628},			//  north-west corner
 	
-		{MAV_CMD_NAV_LAND, 	 	0,		0,		0,  	0,		0,          0},					//  go back down three feet
+		{MAV_CMD_NAV_LAND, 	 	0,		0,		0,  	0,		0,          0}				//  go back down three feet
 	};
 	
 	//STEP 2
