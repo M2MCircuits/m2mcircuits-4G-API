@@ -7,12 +7,8 @@
 //IDEAL USAGE:
 //Step 1) "route1" text is read which will call
 //Step 2) route1.c which will get to the MAV> prompt and
-		//system("sudo su");
-		//system("echo BB-UART1 > /sys/devices/bone_capemgr.*/slots");
-		//system("sudo mavproxy.py --master=/dev/ttyO1");
-//Step 3) issue command "mode auto" from which:
-		//system("mode auto");
-//Step 4) AUTO> <start c code to issue each of the commands below in route_one>
+//Step 3) issue command "mode auto" from which
+//Step 4) we can issue each of the commands below in route_one
 
 //fly in a square at altitude 3 feet in the north side of the east parking lot of SPN
 //coordinates can be confirmed on google maps
@@ -34,7 +30,15 @@ int main(int argc, char **argv){
 		{MAV_CMD_NAV_LAND, 	 	0,		0,		0,  	0,		0,          0},					//  go back down three feet
 	};
 	
-	//we will issue the commands in Steps 2 and 3 here
+	//STEP 2
+	//system("sudo su"); //change to super user to have permissions for next line
+	//system("echo BB-UART1 > /sys/devices/bone_capemgr.*/slots"); //UART communication
+	//system("sudo mavproxy.py --master=/dev/ttyO1"); //start mavproxy
+	
+	//STEP 3 - at this point you should have a MAV> prompt
+	//system("mode auto"); //get AUTO> prompt
+	
+	//STEP 4: issue route_one commands (need to confirm syntax)
 	
 	printf("\nEnd Route 1 Logic\n");
 
