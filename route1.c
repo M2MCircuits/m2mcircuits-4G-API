@@ -18,7 +18,7 @@ int main(int argc, char **argv){
 	printf("\nStart Route 1 Logic\n");
 
 	float route_one[][6] = {
-		{MAV_CMD_MISSION_START,  	0, 		0,  	0,  	0,	0, 		  	0}//start in AUTO mode without need to touch the throttle on the controller
+		{MAV_CMD_MISSION_START,  	0, 		0,  	0,  	0,	0, 		  	0},//start in AUTO mode without need to touch the throttle on the controller
 		//	CMD					P1		P2		P3		Alt		Lat			Long
 		{MAV_CMD_NAV_TAKEOFF,  	0, 		0,  	0,  	3.0,	0, 		  	0},					//  go up three feet
 		
