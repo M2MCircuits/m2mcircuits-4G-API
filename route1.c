@@ -32,11 +32,11 @@ int main(int argc, char **argv){
 	
 	//STEP 2
 	//system("sudo su"); //change to super user to have permissions for next line
-	//system("echo BB-UART1 > /sys/devices/bone_capemgr.*/slots"); //UART communication
-	//system("sudo mavproxy.py --master=/dev/ttyO1"); //start mavproxy
+	system("echo BB-UART1 > /sys/devices/bone_capemgr.9/slots"); //UART communication
+	system("sudo mavproxy.py --master=/dev/ttyO1"); //start mavproxy
 	
 	//STEP 3 - at this point you should have a MAV> prompt
-	//system("mode auto"); //get AUTO> prompt
+	system("mode auto"); //get AUTO> prompt
 	
 	//STEP 4: issue route_one commands (need to confirm syntax)
 	
