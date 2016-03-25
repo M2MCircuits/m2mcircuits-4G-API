@@ -1,4 +1,5 @@
 //Listens for incoming text messages and executes commands depending on their content.
+//Compile with gcc -DLINUX -std=gnu99 smsListener.c cModemInterface.c cModemStream.c cSMS.c -o smsListener
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
