@@ -40,3 +40,7 @@ Example 6
 
 "Changes APN"
 gcc -DLINUX -std=gnu99 APNTest.c cInet.c cModemInterface.c cModemStream.c -o APNTest
+
+Example 7
+"Listens for incoming SMS messages and performs desired functions based on their contents"
+gcc -DLINUX -std=gnu99 smsListener.c cModemInterface.c cModemStream.c cSMS.c -o smsListener
