@@ -1,0 +1,2 @@
+edit /etc/rc.local
+always exit with return 0;
