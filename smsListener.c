@@ -1,5 +1,10 @@
 //Listens for incoming text messages and executes commands depending on their content.
 //Compile with gcc -DLINUX -std=gnu99 smsListener.c cModemInterface.c cModemStream.c cSMS.c -o smsListener
+
+//Usage: the program should begin listening on boot. To accomplish this, add the following lines to etc/rc.local:
+//	sudo su
+//	cd/home/debian/makermodem-master/Examples/Linux (or cd/<your_folder containing smsListener>)
+//	./smsListener
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
