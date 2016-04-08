@@ -34,10 +34,12 @@ my $result = $service->call('sendSMSRequest' => (
  SOAP::Data->name('messageId' => ''),
   SOAP::Data->name('version' => ''),
   SOAP::Data->name('licenseKey' => $licenseKey),
-  SOAP::Data->name('iccids' =>
+  SOAP::Data->name('messageTextEncoding' => 'Literal'),
+  SOAP::Data->name('SendSMSRequestParamGroup' =>
       \SOAP::Data->value(
-          SOAP::Data->name('iccid' => '<INSERT ICCID HERE>'),
-          SOAP::Data->name('iccid' => '<INSERT ANOTHER ICCID HERE>')))
+          SOAP::Data->name('sentToIccid' => '<INSERT ICCID HERE>'),
+          SOAP::Data->name('messageText' => '<INSERT ICCID HERE>'),
+          SOAP::Data->name('tpvp' => '<INSERT ANOTHER ICCID HERE>')))
 ));
 
 print "Call result:\n" . Dumper($result->valueof('//terminals/terminal')) . "\n";
