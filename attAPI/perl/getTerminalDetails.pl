@@ -42,5 +42,4 @@ my $result = $service->call('sendSMSRequest' => (
           SOAP::Data->name('tpvp' => '<INSERT TPVP unsignedByte HERE>')))
 ));
 
-print "Call result:\n" . Dumper($result->valueof('//terminals/terminal')) . "\n";
-print "Status of the first terminal: " . $result->valueof('//terminals/[1]/status') . "\n";
+print "Call result:\n" . Dumper($result->valueof('//sendSMSRequest/smsMsgId')) . "\n";
