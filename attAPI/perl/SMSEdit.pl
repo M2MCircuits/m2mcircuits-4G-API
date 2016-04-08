@@ -8,8 +8,8 @@ my $WSSE_URI = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecuri
 my $PASSWORD_TYPE = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText';
 
 my $env = 'apitest'; # Apitest URL. See "Get WSDL Files" in the API documentation for Production URL.
-my $url = 'https://'.$env.'.jasperwireless.com/ws/service/terminal';
-my $soapAction = 'http://api.jasperwireless.com/ws/service/terminal/GetTerminalDetails';
+my $url = 'https://'.$env.'.jasperwireless.com/ws/service/sendSMSRequest';
+my $soapAction = 'http://api.jasperwireless.com/ws/service/sendSMSRequest';
 my $licenseKey = '<INSERT LICENSE KEY>';
 my $userName = '<INSERT USER NAME>';
 my $password = '<INSERT PASSWORD>';
@@ -24,7 +24,7 @@ $service->on_fault(sub {
     });
 
 $service->on_action(sub{return $soapAction;});
-my $result = $service->call('GetTerminalDetailsRequest' => (
+my $result = $service->call('sendSMSRequest' => (
   SOAP::Header->uri($WSSE_URI)->name('wsse:Security' =>
       \SOAP::Data->name('wsse:UsernameToken'=>
           \SOAP::Data->value(
@@ -34,11 +34,12 @@ my $result = $service->call('GetTerminalDetailsRequest' => (
  SOAP::Data->name('messageId' => ''),
   SOAP::Data->name('version' => ''),
   SOAP::Data->name('licenseKey' => $licenseKey),
-  SOAP::Data->name('iccids' =>
+  SOAP::Data->name('messageTextEncoding' => 'Literal'),
+  SOAP::Data->name('SendSMSRequestParamGroup' =>
       \SOAP::Data->value(
-          SOAP::Data->name('iccid' => '<INSERT ICCID HERE>'),
-          SOAP::Data->name('iccid' => '<INSERT ANOTHER ICCID HERE>')))
+          SOAP::Data->name('sentToIccid' => '89011702272013889834'),
+          SOAP::Data->name('messageText' => 'Hello From AT&T SMS API'),
+          SOAP::Data->name('tpvp' => '<INSERT TPVP unsignedByte HERE>')))
 ));
 
-print "Call result:\n" . Dumper($result->valueof('//terminals/terminal')) . "\n";
-print "Status of the first terminal: " . $result->valueof('//terminals/[1]/status') . "\n";
+print "Call result:\n" . Dumper($result->valueof('//sendSMSRequest/smsMsgId')) . "\n";
