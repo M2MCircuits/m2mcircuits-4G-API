@@ -8,8 +8,8 @@ my $WSSE_URI = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecuri
 my $PASSWORD_TYPE = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText';
 
 my $env = 'apitest'; # Apitest URL. See "Get WSDL Files" in the API documentation for Production URL.
-my $url = 'https://'.$env.'.jasperwireless.com/ws/service/terminal';
-my $soapAction = 'http://api.jasperwireless.com/ws/service/terminal/GetTerminalDetails';
+my $url = 'https://'.$env.'.jasperwireless.com/ws/service/sendSMSRequest';
+my $soapAction = 'http://api.jasperwireless.com/ws/service/sendSMSRequest';
 my $licenseKey = '***REMOVED***';
 my $userName = '***REMOVED***';
 my $password = '***REMOVED***';
@@ -24,7 +24,7 @@ $service->on_fault(sub {
     });
 
 $service->on_action(sub{return $soapAction;});
-my $result = $service->call('GetTerminalDetailsRequest' => (
+my $result = $service->call('sendSMSRequest' => (
   SOAP::Header->uri($WSSE_URI)->name('wsse:Security' =>
       \SOAP::Data->name('wsse:UsernameToken'=>
           \SOAP::Data->value(
