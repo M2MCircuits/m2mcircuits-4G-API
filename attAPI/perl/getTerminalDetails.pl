@@ -37,9 +37,9 @@ my $result = $service->call('sendSMSRequest' => (
   SOAP::Data->name('messageTextEncoding' => 'Literal'),
   SOAP::Data->name('SendSMSRequestParamGroup' =>
       \SOAP::Data->value(
-          SOAP::Data->name('sentToIccid' => '<INSERT ICCID HERE>'),
-          SOAP::Data->name('messageText' => '<INSERT ICCID HERE>'),
-          SOAP::Data->name('tpvp' => '<INSERT ANOTHER ICCID HERE>')))
+          SOAP::Data->name('sentToIccid' => '89011702272013889834'),
+          SOAP::Data->name('messageText' => 'Hello From AT&T SMS API'),
+          SOAP::Data->name('tpvp' => '<INSERT TPVP unsignedByte HERE>')))
 ));
 
 print "Call result:\n" . Dumper($result->valueof('//terminals/terminal')) . "\n";
