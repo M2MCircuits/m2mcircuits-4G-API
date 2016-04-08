@@ -37,7 +37,7 @@ int main(int argc, char **argv){
 		return 0;
 	}
 	mmSocketClose(mm, 0); //make sure at least one socket is closed.
-	int sid = mmSocketCreate(mm, argc==3);
+	int sid = mmSocketOpen(mm, argc==3);
 	if(sid < 0){
 		printf("Failed to create socket.\n");
 		return 0;
@@ -63,7 +63,7 @@ int main(int argc, char **argv){
 		tv.tv_usec = 10;
 		retval = select(1, &rfds, NULL, NULL, &tv);
 		if(retval){
-			read(0, buff, 1);
+			read(0,&buff, 1);
 			mmDirectLinkWrite(mm, &buff, 1);
 		}
 		if(mmDirectLinkAvailable(mm) > 0){

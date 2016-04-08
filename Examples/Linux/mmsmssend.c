@@ -16,5 +16,5 @@ int main(int argc, char **argv){
 	}else{
 		printf("Unable to send message.\n");
 	}
-	free(mm);
+	
 }
