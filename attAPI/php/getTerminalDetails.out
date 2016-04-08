@@ -1,0 +1,18 @@
+faultcode: SOAP-ENV:Client
+faultstring: 400200
+faultDetail: 
+response: HTTP/1.1 100 Continue
+
+HTTP/1.1 500 Internal Server Error
+Server: Apache-Coyote/1.1
+X-dynaTrace-JS-Agent: true
+Set-Cookie: dtCookie=B6438EBF78C34BBD2179751E79A3A707|X2RlZmF1bHR8MQ; Domain=.jasperwireless.com; Path=/
+Accept: text/xml, text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
+SOAPAction: ""
+Content-Type: text/xml;charset=utf-8
+Content-Length: 1193
+Date: Fri, 08 Apr 2016 19:38:56 GMT
+Connection: close
+Set-Cookie: f5avrbbbbbbbbbbbbbbbb=FAAMFDKMGLBNCIHPCHNBJAHJLGCOOLOGLJMFKNEGGOMDALBDLLLLCCDDOAEAHMCEFIPMMIABMJEPBLOMIAIEFALAGNEEJCLEFKBPHGGJEFDEAFDGOHAAKDEHEGFLDHJC; HttpOnly; secure
+
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header/><SOAP-ENV:Body><SOAP-ENV:Fault><faultcode>SOAP-ENV:Client</faultcode><faultstring>400200</faultstring><detail><jws:error xmlns:jws="http://api.jasperwireless.com/ws/schema">Security validation error. Your username or password is incorrect.</jws:error><jws:exception xmlns:jws="http://api.jasperwireless.com/ws/schema">com.jasperwireless.ws.ApiSecurityValidationException</jws:exception><jws:message xmlns:jws="http://api.jasperwireless.com/ws/schema">org.springframework.ws.soap.security.xwss.XwsSecurityValidationException: com.sun.xml.wss.impl.WssSoapFaultException: Authentication of Username Password Token Failed; nested exception is com.sun.xml.wss.XWSSecurityException: com.sun.xml.wss.impl.WssSoapFaultException: Authentication of Username Password Token Failed Cause: com.sun.xml.wss.impl.WssSoapFaultException: Authentication of Username Password Token Failed; nested exception is com.sun.xml.wss.XWSSecurityException: com.sun.xml.wss.impl.WssSoapFaultException: Authentication of Username Password Token Failed</jws:message></detail></SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>
