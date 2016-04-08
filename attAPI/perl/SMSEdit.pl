@@ -10,9 +10,9 @@ my $PASSWORD_TYPE = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-use
 my $env = 'apitest'; # Apitest URL. See "Get WSDL Files" in the API documentation for Production URL.
 my $url = 'https://'.$env.'.jasperwireless.com/ws/service/sendSMSRequest';
 my $soapAction = 'http://api.jasperwireless.com/ws/service/sendSMSRequest';
-my $licenseKey = '<INSERT LICENSE KEY>';
-my $userName = '<INSERT USER NAME>';
-my $password = '<INSERT PASSWORD>';
+my $licenseKey = '<INSERT LICENSE KEY>'; #Replace this line with one containing your license key
+my $userName = '<INSERT USER NAME>'; #Replace this line with one containing your user name
+my $password = '<INSERT PASSWORD>'; #Replace this line with one containing your password
 
 my $service = SOAP::Lite->proxy($url)->uri($JASPER_URI)->autotype(0)->readable(1);
 $service->on_fault(sub {
