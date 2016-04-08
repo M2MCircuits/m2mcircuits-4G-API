@@ -5,7 +5,7 @@ $JASPER_URI = 'http://api.jasperwireless.com/ws/schema';
 
 $env = 'apitest'; # Apitest URL. See "Get WSDL Files" in the API documentation for Production URL.
 $wsdlUrl = 'http://'.$env.'.jasperwireless.com/ws/schema/Echo.wsdl';
-$licenseKey = '***REMOVED***';
+$licenseKey = '<INSERT LICENSE KEY HERE>';
 
 $service = new nusoap_client($wsdlUrl, true /** wsdl **/);
 $msg =
