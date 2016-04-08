@@ -1,0 +1,3 @@
+PHP Warning:  Attempt to modify property of non-object in /root/php/lib/nusoap.php on line 4694
+PHP Warning:  Attempt to modify property of non-object in /root/php/lib/nusoap.php on line 4694
+PHP Notice:  Array to string conversion in /root/php/lib/nusoap.php on line 7463
