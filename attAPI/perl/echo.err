@@ -4,6 +4,6 @@ The following SOAP fault occurred:
  faultdetail: $VAR1 = {
           'exception' => 'com.jasperwireless.ws.ApiException',
           'error' => 'Invalid license key. Please use a alid API license key.'
-	  'message' => 'Invalid API license key: ***REMOVED***'
+	  'message' => 'Invalid API license key: '
         };
 
