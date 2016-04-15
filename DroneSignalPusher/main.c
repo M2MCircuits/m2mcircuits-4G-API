@@ -21,8 +21,9 @@
  *
 */
 
-unsigned int pw[5];
+unsigned int packet[9];
 unsigned int pwnum[4];
+int check;
 
 int main(void) {
     WDTCTL = WDTPW | WDTHOLD;	// Stop watchdog timer
@@ -40,9 +41,13 @@ int main(void) {
 
 	//0111 1000 = 0x71
 	P1DIR |= 0x71; //Sets Pins 1.4, 1.5, 1.6, and 1.7 to outputs
-
+	check=0;
 	while(1){
-		read();
+		check = read();
+		while(check!=0){
+			check = read();
+		}
+		translate();
 		//Output correctly timed for each signal
 		//Turn pw[] values into usable numbers based on how much they need the signal to be on
 
@@ -73,15 +78,28 @@ int main(void) {
 	return 0;
 }
 
-void read(){
-	for(int pn=0; pn<4; pn++){
-			while (!(IFG2&UCA0TXIFG));                // USCI_A0 TX buffer ready?
-			pw[pn]=UCA0RXBUF;
-		}
+/*
+ * read by BB
+ * type: int, returns int
+ * input: none
+ * output: 0 if packet data undamaged, 1 if packet data damaged
+*/
+int read(){
+	int checksum=0;
+	for(int pn=0; pn<9; pn++){
+			while (!(IFG2&UCA0RXIFG));                // USCI_A0 TRX buffer ready?
+			packet[pn]=UCA0RXBUF;
+	}
+	for(int n=0; n<8; n++){
+		checksum ^= packet[n];
+	}
+	if(checksum!=packet[8])
+		return 1;
+	return 0;
 }
 
 void translate(){
-	for(int i=0; i<0; i++){
-
+	for(int i=0; i<4; i++){
+		pw[i] = (packet[(2*i)] * 256) + (packet[(2*i)+1])
 	}
 }
