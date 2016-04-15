@@ -1,5 +1,5 @@
 // rcSignalListener.c
-// Functionality: used to capture 5 bytes of data from makermodem over
+// Functionality: used to capture 9 bytes of data from makermodem over
 // usb/UART3 connection and then retransmit them to a MSP430 over UART2 
 // Three basic steps
 // 1. make interface connection to maker modem
@@ -17,6 +17,7 @@
 
 
 // Maker Modem library header files
+#define LINUX
 #include "cModemInterface.h"
 
 // Standard header files
@@ -85,7 +86,7 @@ int init()
 	}
 
 
-	// open usb serial port @ 115200 baud for reading --- RX from maker modem
+	// open usb serial port @ 115200 baud for reading --- maker modem to RX on BeagleBoard
 	modem = mmCommInit("/dev/ttyACM0", 115200);
 	if ( modem ){
 		check2 = 1;
@@ -97,8 +98,8 @@ int init()
 	}
 
 
-	// open serial port UART2 @ 115200 baud for writing --- TX to MSP430
-	int fd = open("/dev/ttyO2", O_WRONLY | O_NOCTTY);
+	// open serial port UART2 @ 115200 baud for writing --- TX on BeagleBoard to MSP430
+	int fd = open("/dev/ttyO2", O_WRONLY | O_NOCTTY); // 
 	if ( fd ){
 		printf("opened /dev/ttyO2 for writing at 115200\n");
 		check3 = 1;
