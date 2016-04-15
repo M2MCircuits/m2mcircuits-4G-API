@@ -18,6 +18,7 @@
 
 // Maker Modem library header files
 #define LINUX
+#include "cModemStream.h"
 #include "cModemInterface.h"
 
 // Standard header files
