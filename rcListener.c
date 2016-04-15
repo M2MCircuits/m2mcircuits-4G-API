@@ -13,7 +13,7 @@
 // TI LanchPad MSP430 UART 		RX 		TX 		CTS 	RTS 	Device
 
 // compile line
-// gcc rcListener.c cModemInterface.c cModemStream.c -o rc
+// gcc -DLINUX -std=gnu99 rcListener.c cModemInterface.c cModemStream.c -o rc
 
 
 // Maker Modem library header files
