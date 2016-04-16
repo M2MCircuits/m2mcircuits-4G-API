@@ -49,8 +49,6 @@ void main(void)
 
     //now ready to acquire 4 pulse times and send out serially during pause between pulses
 
-    //should probably repeat the above sync process periodically.............................
-
     //ACQUIRE
     while(1)
 	{
@@ -72,19 +70,19 @@ void main(void)
 		}
 
 		//build packet with EX_OR checksum.................
-		//encode();
+		encode();
 		//send packet at 115200 baud to MakerModem
-		//send();
+		send();
 		//Resynchs after every packet, as it becomes unreliable almost immediately
 		//Due to the time taken to transfer and encode data
-//		synch();
-		if(resynch<=1){
-			resynch++;
-		}
-		else{
-			resynch=0;
-			synch();
-		}
+		synch();
+		// if(resynch<=1){
+		// 	resynch++;
+		// }
+		// else{
+		// 	resynch=0;
+		// 	synch();
+		// }
 	    //should probably repeat the above sync process periodically.............................
 	}
 }
