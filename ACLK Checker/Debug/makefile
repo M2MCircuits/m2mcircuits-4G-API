@@ -117,32 +117,32 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXE_OUTPUTS += \
-ACLK\ Checker.out \
+Transmitter\ Pulse\ Acq.out \
 
 EXE_OUTPUTS__QUOTED += \
-"ACLK Checker.out" \
+"Transmitter Pulse Acq.out" \
 
 BIN_OUTPUTS += \
-ACLK\ Checker.hex \
+Transmitter\ Pulse\ Acq.hex \
 
 BIN_OUTPUTS__QUOTED += \
-"ACLK Checker.hex" \
+"Transmitter Pulse Acq.hex" \
 
 
 # All Target
-all: ACLK\ Checker.out
+all: Transmitter\ Pulse\ Acq.out
 
 # Tool invocations
-ACLK\ Checker.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
+Transmitter\ Pulse\ Acq.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MSP430 Linker'
-	"C:/ti/ccsv6/tools/compiler/ti-cgt-msp430_4.4.6/bin/cl430" -vmsp --abi=eabi --use_hw_mpy=none --advice:power=all -g --define=__MSP430G2553__ --display_error_number --diag_wrap=off --diag_warning=225 --printf_support=minimal -z -m"ACLK Checker.map" --stack_size=80 --heap_size=80 -i"C:/ti/ccsv6/ccs_base/msp430/include" -i"C:/ti/ccsv6/tools/compiler/ti-cgt-msp430_4.4.6/lib" -i"C:/ti/ccsv6/tools/compiler/ti-cgt-msp430_4.4.6/include" --reread_libs --diag_wrap=off --warn_sections --display_error_number --xml_link_info="ACLK Checker_linkInfo.xml" --use_hw_mpy=none --rom_model -o "ACLK Checker.out" $(ORDERED_OBJS)
+	"C:/ti/ccsv6/tools/compiler/ti-cgt-msp430_4.4.6/bin/cl430" -vmsp --abi=eabi --use_hw_mpy=none --advice:power=all -g --define=__MSP430G2553__ --display_error_number --diag_wrap=off --diag_warning=225 --printf_support=minimal -z -m"Transmitter Pulse Acq.map" --stack_size=80 --heap_size=80 -i"C:/ti/ccsv6/ccs_base/msp430/include" -i"C:/ti/ccsv6/tools/compiler/ti-cgt-msp430_4.4.6/lib" -i"C:/ti/ccsv6/tools/compiler/ti-cgt-msp430_4.4.6/include" --reread_libs --diag_wrap=off --warn_sections --display_error_number --xml_link_info="Transmitter Pulse Acq_linkInfo.xml" --use_hw_mpy=none --rom_model -o "Transmitter Pulse Acq.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
-ACLK\ Checker.hex: $(EXE_OUTPUTS)
+Transmitter\ Pulse\ Acq.hex: $(EXE_OUTPUTS)
 	@echo 'Invoking: MSP430 Hex Utility'
-	"C:/ti/ccsv6/tools/compiler/ti-cgt-msp430_4.4.6/bin/hex430" --memwidth=8 --romwidth=8 -o "ACLK Checker.hex" $(EXE_OUTPUTS__QUOTED)
+	"C:/ti/ccsv6/tools/compiler/ti-cgt-msp430_4.4.6/bin/hex430" --memwidth=8 --romwidth=8 -o "Transmitter Pulse Acq.hex" $(EXE_OUTPUTS__QUOTED)
 	@echo 'Finished building: $@'
 	@echo ' '
 
