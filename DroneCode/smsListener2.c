@@ -64,6 +64,8 @@ int isNumberValid(char *phoneNumber) {
 	  Return something to notify end of mission
 */
 void followRoute1() {
+	//COMMANDS: http://planner.ardupilot.com/wiki/common-mavlink-mission-command-messages-mav_cmd/#commands_supported_by_copter
+	//SOURCE CODE FOR ARDUPILOT/APM: https://github.com/diydrones
 	printf("\nStart Route 1 Logic\n");
 	
 	//UART communication
