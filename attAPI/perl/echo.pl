@@ -14,7 +14,21 @@ my $soapAction = 'http://api.jasperwireless.com/ws/service/echo/Echo';
 my $licenseKey = '<PUT LICENSE KEY HERE>';
 
 #"->" is an infix dereference operator like in C
-my $service = SOAP::Lite->proxy($url)->uri($JASPER_URI)->autotype(0)->readable(1);
+my $service = SOAP::Lite
+->proxy($url)
+->uri($JASPER_URI) #default_ns($JASPER_URI)
+->autotype(0)
+->readable(1);
+#proxy: The proxy is the server or endpoint to which the client is going to connect. This method allows the setting of the endpoint, 
+#	along with any extra information that the transport object may need when communicating the request.
+#uri: DEPRECATED. The URI associated with this accessor on a client object is the service-specifier for the request, often encoded 
+#	for HTTP-based requests as the SOAPAction header. While the names may seem confusing, this method doesn't specify 
+#	the endpoint itself. In most circumstances, the uri refers to the namespace used for the request.
+#autotype: By default, the serializer tries to automatically deduce types for the data being sent in a message. 
+#	Setting a false value with this method disables the behavior.
+#readable: When this is used to set a true value for this property, the generated XML sent to the endpoint has extra characters 
+#	(spaces and new lines) added in to make the XML itself more readable to human eyes (presumably for debugging). 
+#	The default is to not send any additional characters.
 
 #error handling
 $service->on_fault(sub {
