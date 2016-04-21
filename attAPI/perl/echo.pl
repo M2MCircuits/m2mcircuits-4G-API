@@ -51,4 +51,9 @@ my $result = $service->call('EchoRequest' => (
   SOAP::Data->name('licenseKey' => $licenseKey),
   SOAP::Data->name('value' => 'Hello World')
 ));
+#call: The SOAP::Lite client objects can manage remote calls with auto-dispatching using some of Perl's more elaborate features. 
+#	call is used when the application wants a greater degree of control over the details of the call itself. The method may 
+#	be built up from a SOAP::Data object, so as to allow full control over the namespace associated with the tag, as well as 
+#	other attributes like encoding. This is also important for calling methods that contain characters not allowable in Perl 
+#	function names, such as A.B.C.
 print "Call result: " . $result->valueof('//value') . "\n";
