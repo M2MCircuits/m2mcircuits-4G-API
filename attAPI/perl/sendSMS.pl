@@ -9,8 +9,8 @@ my $WSSE_URI = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecuri
 my $PASSWORD_TYPE = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText';
 
 my $env = 'apitest'; # Apitest URL. See "Get WSDL Files" in the API documentation for Production URL.
-my $url = 'https://'.$env.'.jasperwireless.com/ws/service/echo';
-my $soapAction = 'http://api.jasperwireless.com/ws/service/echo/Echo';
+my $url = 'https://'.$env.'.jasperwireless.com/ws/service/sendSMSRequest';
+my $soapAction = 'http://api.jasperwireless.com/ws/service/sendSMSRequest/SendSMSRequest';
 my $licenseKey = '<PUT LICENSE KEY HERE>';
 
 #"->" is an infix dereference operator like in C
@@ -57,11 +57,14 @@ $service->on_action(sub{return $soapAction;});
 # *	sentToIccid
 # *	messageText
 # *	tpvp
-my $result = $service->call('EchoRequest' => (
+my $result = $service->call('SendSMSRequest' => (
   SOAP::Data->name('messageId' => ''),
   SOAP::Data->name('version' => ''),
   SOAP::Data->name('licenseKey' => $licenseKey),
-  SOAP::Data->name('value' => 'Hello World')
+  SOAP::Data->name('messageTextEncoding' => ''),
+  SOAP::Data->name('sentToIccid' => ''),
+  SOAP::Data->name('messageText' => 'Hello, Dave'),
+  SOAP::Data->name('tpvp' => '')
 ));
 #call: The SOAP::Lite client objects can manage remote calls with auto-dispatching using some of Perl's more elaborate features. 
 #	call is used when the application wants a greater degree of control over the details of the call itself. The method may 
