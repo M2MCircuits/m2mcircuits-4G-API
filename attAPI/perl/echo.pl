@@ -3,6 +3,7 @@ use strict;
 use Data::Dumper;
 use SOAP::Lite;
 
+#my keyword for local variables, $varname = value
 my $JASPER_URI = 'http://api.jasperwireless.com/ws/schema';
 my $WSSE_URI = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd';
 my $PASSWORD_TYPE = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText';
@@ -12,7 +13,10 @@ my $url = 'https://'.$env.'.jasperwireless.com/ws/service/echo';
 my $soapAction = 'http://api.jasperwireless.com/ws/service/echo/Echo';
 my $licenseKey = '<PUT LICENSE KEY HERE>';
 
+#"->" is an infix dereference operator like in C
 my $service = SOAP::Lite->proxy($url)->uri($JASPER_URI)->autotype(0)->readable(1);
+
+#error handling
 $service->on_fault(sub {
     my ($soap,$response) = @_;
     die('The following SOAP fault occurred:', "\n",
@@ -21,6 +25,7 @@ $service->on_fault(sub {
 	' faultdetail: ', Dumper($response->faultdetail()), "\n")
     });
 
+#SOAP echo logic
 $service->on_action(sub{return $soapAction;});
 my $result = $service->call('EchoRequest' => (
   SOAP::Data->name('messageId' => ''),
