@@ -58,13 +58,13 @@ $service->on_action(sub{return $soapAction;});
 # *	messageText
 # *	tpvp
 my $result = $service->call('SendSMSRequest' => (
-  SOAP::Data->name('messageId' => ''),
-  SOAP::Data->name('version' => ''),
+  SOAP::Data->name('messageId' => ''), #Any string value can be provided if client doesnt care (if no response needed)
+  SOAP::Data->name('version' => ''), #String: The API version (schema version) this request is based upon
   SOAP::Data->name('licenseKey' => $licenseKey),
-  SOAP::Data->name('messageTextEncoding' => ''),
-  SOAP::Data->name('sentToIccid' => ''),
+  SOAP::Data->name('messageTextEncoding' => ''), #LITERAL by default
+  SOAP::Data->name('sentToIccid' => ''), #string, whichever SIM it is being sent to
   SOAP::Data->name('messageText' => 'Hello, Dave'),
-  SOAP::Data->name('tpvp' => '')
+  SOAP::Data->name('tpvp' => 0) #unsignedByte that specifies validity period for message
 ));
 #call: The SOAP::Lite client objects can manage remote calls with auto-dispatching using some of Perl's more elaborate features. 
 #	call is used when the application wants a greater degree of control over the details of the call itself. The method may 
