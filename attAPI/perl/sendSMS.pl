@@ -39,14 +39,14 @@ $service->on_fault(sub {
 	' faultdetail: ', Dumper($response->faultdetail()), "\n")
     });
 
-#SOAP echo logic
+#SOAP SendSMS Logic
 $service->on_action(sub{return $soapAction;});
 #on_action: Triggered when the transport object sets up the SOAPAction header for an HTTP-based call. 
 #	The default is to set the header to the string, uri#method, in which URI is the value set by the uri method 
 #	described earlier, and method is the name of the method being called. When called, the routine referenced 
 #	(or the closure, if specified as in the example) is given two arguments, uri and method, in that order.
 
-#For our application, this should be a SendSMSRequest: See XMLSchema in Jasper
+#For details, See XMLSchema in Jasper
 #XML elements: ? denotes uncertain if they are required, * denotes participation in SendSMSRequestParamGroup
 #	messageID ?
 #	version ?
