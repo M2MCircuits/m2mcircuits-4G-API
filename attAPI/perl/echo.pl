@@ -41,6 +41,10 @@ $service->on_fault(sub {
 
 #SOAP echo logic
 $service->on_action(sub{return $soapAction;});
+#on_action: Triggered when the transport object sets up the SOAPAction header for an HTTP-based call. 
+#	The default is to set the header to the string, uri#method, in which URI is the value set by the uri method 
+#	described earlier, and method is the name of the method being called. When called, the routine referenced 
+#	(or the closure, if specified as in the example) is given two arguments, uri and method, in that order.
 my $result = $service->call('EchoRequest' => (
   SOAP::Data->name('messageId' => ''),
   SOAP::Data->name('version' => ''),
