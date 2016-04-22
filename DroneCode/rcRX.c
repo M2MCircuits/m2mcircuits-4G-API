@@ -14,6 +14,7 @@
 
 
 //*****************************// INCLUDES //*****************************//
+#include <arpa/inet.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -35,9 +36,9 @@ void setupUDP(void);
 
 //*****************************// GLOBALS //*****************************//
 char buff[RC_BYTES];						// 9 bytes read from Launchpad
-int sock_listen,sock_recv;
-struct sockaddr_in my_addr,recv_addr;
-int i,addr_size,bytes_received;
+int sock_recv;
+struct sockaddr_in my_addr;
+int i;
 fd_set readfds;
 struct timeval timeout={0,0};
 int incoming_len;
@@ -55,24 +56,34 @@ int main(int argc, char *argv[])
 	int uart2 = initUART();		// initialize UART2 for reading from Launchpad
 	int check = UDPsocket();	// create a UDP socket
 
-	if (uart2 && check)
+	if (rcBytes && check)
 	{
 		setupUDP();		// setup the UDP socket
 		while(1)
 		{
-			bytes_received=recv(sock_recv,buf,BUF_SIZE,0);
-			buf[bytes_received]=0;
-			printf("Received: %s\n",buf);
-
-			if(bytes_received)
+			do
 			{
-				// Send rc Data/ bytes to Launch Pad via UART2
-				write(uart2, buf, 1);
-				printf("writing to ttyO2\n");
+				FD_ZERO(&readfds); /* zero out socket set */
+				FD_SET(sock_recv,&readfds); /* add socket to listen to */
+				select_ret=select(sock_recv+1,&readfds,NULL,NULL,&timeout);
+				if (select_ret > 0) /* anything arrive on any socket? */
+				{
+					incoming_len=sizeof(remote_addr); /* who sent to us? */
+					recv_msg_size=recvfrom(sock_recv,buf,BUF_SIZE,0,(struct sockaddr *)&remote_addr,&incoming_len);
+					if (recv_msg_size > 0) /* what was sent? */
+					{
+						buf[recv_msg_size]='\0';
+						// printf("From %s received: %s\n", inet_ntoa(remote_addr.sin_addr) , buf);
+						printf("revieved:  %s\n", buf);
+						write(uart2, buf, 1);	// Send rc Data bytes to Launch Pad via UART2
+					}
+				}
 			}
+			while (select_ret > 0);
+				if (strcmp(buf,"shutdown") == 0)
+					break;
 		}
 		close(sock_recv);
-		close(sock_listen);
 	}
 	else
 		{ exit(0); }
@@ -105,8 +116,8 @@ int initUART()
 // Used to create a UDP socket for listening/recieving data
 int UDPsocket(void)
 {
-	sock_listen=socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	if (sock_listen < 0)
+	sock_recv=socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	if (sock_recv < 0)
 	{
 		printf("socket() failed\n");
 		return 0;
@@ -126,23 +137,13 @@ void setupUDP(void)
 	my_addr.sin_port = htons((unsigned short)DRONE_PORT);
 	
 	/* bind socket to the local address */
-	i=bind(sock_listen, (struct sockaddr *) &my_addr,
-	sizeof (my_addr));
+	i=bind(sock_recv, (struct sockaddr *) &my_addr, sizeof (my_addr));
+
 	if (i < 0)
 	{
 		printf("bind() failed\n");
 		exit(0);
 	}
-	/* listen ... */
-	i=listen(sock_listen, 5);
-	if (i < 0)
-	{
-		printf("listen() failed\n");
-		exit(0);
-	}
-	/* get new socket to receive data on */
-	addr_size=sizeof(recv_addr);
-	sock_recv=accept(sock_listen, (struct sockaddr *) &recv_addr, &addr_size);
 }
 
 
