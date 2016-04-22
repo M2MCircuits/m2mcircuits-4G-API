@@ -59,7 +59,9 @@ int main(int argc, char *argv[])
 			if (rcBytes)	// if there is UART data, send it out through UDP socket
 			{
 				bytes_sent=sendto(sock_send, buff, rcBytes, 0,(struct sockaddr *) &addr_send, sizeof(addr_send));
+				printf("DEBUGGING: rcBytes=%i",rcBytes);
 			}
+			
 			// test code for sending a string
 			// printf("Send? ");
 			// scanf("%s",text);
