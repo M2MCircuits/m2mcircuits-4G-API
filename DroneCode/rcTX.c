@@ -13,6 +13,7 @@
 // TI LanchPad MSP430 UART      RX      TX      CTS     RTS     Device
 
 
+//INITIAL REQUIRED SETUP FOR BEAGLEBOARD: go to etc/rc.local and add line stty -F /dev/ttyO2 115200 to set baud rate
 //*****************************// INCLUDES //*****************************//
 #include <stdio.h>
 #include <string.h>
