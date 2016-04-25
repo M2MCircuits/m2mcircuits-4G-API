@@ -12,6 +12,7 @@ my $env = 'apitest'; # Apitest URL. See "Get WSDL Files" in the API documentatio
 my $url = 'https://'.$env.'.jasperwireless.com/ws/service/sendSMSRequest';
 my $soapAction = 'http://api.jasperwireless.com/ws/service/sendSMSRequest/SendSMSRequest';
 my $licenseKey = '<PUT LICENSE KEY HERE>';
+my $recipient = '89011702272013889867'
 
 #"->" is an infix dereference operator like in C
 my $service = SOAP::Lite
@@ -58,11 +59,11 @@ $service->on_action(sub{return $soapAction;});
 # *	messageText
 # *	tpvp
 my $result = $service->call('SendSMSRequest' => (
-  SOAP::Data->name('messageId' => ''), #Any string value can be provided if client doesnt care (if no response needed)
-  SOAP::Data->name('version' => ''), #String: The API version (schema version) this request is based upon
+  SOAP::Data->name('messageId' => 'droneSMS'), #Any string value can be provided if client doesnt care (if no response needed)
+  SOAP::Data->name('version' => '5.0.1'), #String: The API version (schema version) this request is based upon
   SOAP::Data->name('licenseKey' => $licenseKey),
   SOAP::Data->name('messageTextEncoding' => ''), #LITERAL by default
-  SOAP::Data->name('sentToIccid' => ''), #string, whichever SIM it is being sent to
+  SOAP::Data->name('sentToIccid' => $recipient), #string, whichever SIM it is being sent to
   SOAP::Data->name('messageText' => 'Hello, Dave'),
   SOAP::Data->name('tpvp' => 0) #unsignedByte that specifies validity period for message
 ));
