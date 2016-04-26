@@ -14,12 +14,6 @@ void sleep_millis(int millis){
 }
 #endif
 
-#ifdef LAUNCHPAD
-/*
-* TODO: Launchpad
-*/
-#endif
-
 #ifdef LINUX
 void sleep_seconds(int seconds){
 	while(seconds= sleep(seconds));
@@ -27,6 +21,7 @@ void sleep_seconds(int seconds){
 void sleep_millis(int millis){
 	usleep(millis*1000);
 }
+
 
 /* Open serial port in raw mode, with custom baudrate if necessary */
 int mmCommInit(const char *device, int rate)

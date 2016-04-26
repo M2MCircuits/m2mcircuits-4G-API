@@ -32,12 +32,6 @@ struct ModemInterface *mmCreate(char * blk)
 }
 #endif
 
-#ifdef LAUNCHPAD
-/*
-* TODO: Launchpad
-*/
-#endif
-
 
 //initialization of modem - returns true if all commands completed successfully, false otherwise
 bool mmInit(struct ModemInterface *interf) {
@@ -212,10 +206,10 @@ void mmLogDebug(char* debug, int priority) {
 
 
 int testSwig(char *buffer, int length){
-	/*printf("%d\n", length);
+	printf("%d\n", length);
 	for(int i = 0; i < 10; i++){
 		buffer[i] = 'a' + i;
 	}
 	buffer[10] = 0;
-	return 10;*/
+	return 10;
 }

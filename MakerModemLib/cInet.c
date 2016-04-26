@@ -17,18 +17,11 @@ bool mmAttachGPRS(struct ModemInterface *iface){
 	return mmSendCommandCheckForOkay(iface, F("AT+UPSDA=0,3"));
 	
 }
-bool mmSetAPN(struct ModemInterface *iface, char apnname[]){
-	char command[150] = "AT+UPSD=0,1,";
-	strcat(command, apnname);
-	if(!mmSendCommandCheckForOkay(iface, F(command))) return false; //set apn
-	return true;
-}
 bool mmInitGPRS(struct ModemInterface *iface){
 	//create and save profile
-	if(!mmSendCommandCheckForOkay(iface, F("AT+UPSD=0,0,0"))) return false;
 	if(!mmSendCommandCheckForOkay(iface, F("AT+UPSD=0,100,8"))) return false;
+	if(!mmSendCommandCheckForOkay(iface, F("AT+UPSD=0,0,2"))) return false;
 	if(!mmSendCommandCheckForOkay(iface, F("AT+UPSDA=0,1"))) return false;
-	if(!mmSendCommandCheckForOkay(iface, F("AT+UPSDA=0,3"))) return false;
 	return true;
 }
 int mmSocketOpen(struct ModemInterface *iface, bool tcp){
@@ -226,3 +219,4 @@ int mmDirectLinkRead(struct ModemInterface *iface, char *buff, int count){
 int mmDirectLinkAvailable(struct ModemInterface *iface){
 	return mmAvailable(iface->modem);
 }
+
