@@ -1,6 +1,0 @@
-
-1) Dependencies
-    Make sure PERL is set up to use the dependencies needed by Jasper:
-      perl -e 'use SOAP::Lite;'
-      perl -e 'use Crypt::SSLeay;'
-    If these have not been installed, perl will return an error message
