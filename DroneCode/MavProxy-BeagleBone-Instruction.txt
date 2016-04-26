@@ -1,0 +1,34 @@
+1. Setup MavProxy
+
+2. Enable UART1
+   - Open /boot/uboot/uEnv.txt
+      - Scroll down to a line that looks like
+           #cape_enable=capemgr.enable_partno=
+	   or
+	   #cape_disable=capemgr.enable_partno=
+      - Add (or change) to be
+           cape_disable=capemgr.enable_partno=BB-UART1
+   - Save and quit uEnv.txt
+   - Run (letter O, not zero). You should see that ttyO1 is not currently enabled
+     ls -l /dev/ttyO*
+   - Reboot the BeagleBone and run ls -l /dev/ttyO* again. Now it should appear that ttyO1 is enabled
+   
+   NOTE: If you are still only seeing ttyO0 enabled, run the following to enable ttyO1:
+   	echo BB-UART1 > /sys/devices/bone_capemgr.*/slots
+
+3. Run MavProxy
+   sudo mavproxy.py --master=/dev/ttyO1 --console --map
+
+   - Note letter O, not zero
+   - --console to open console, --map to open map
+   - For more startup options: http://dronecode.github.io/MAVProxy/html/getting_started/starting.html
+
+4. Using NSH to view GPS on BB hardware
+   - Once mavproxy is started, load the NSH module:
+   MAV> module load nsh
+   - Start NSH
+   MAV> nsh start
+   - Test the GPS functionality 
+   nsh> gps start -m all
+   - Check the GPS unit status
+   nsh> gps status
