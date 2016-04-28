@@ -14,15 +14,6 @@ void sleep_millis(int millis){
 }
 #endif
 
-#ifdef LAUNCHPAD
-void sleep_seconds(int seconds){
-	__delay_cycles(millis*1000*1000);
-}
-void sleep_millis(int millis){
-	__delay_cycles(millis*1000);
-}
-#endif
-
 #ifdef LINUX
 void sleep_seconds(int seconds){
 	while(seconds= sleep(seconds));
