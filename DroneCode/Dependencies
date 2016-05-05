@@ -1,0 +1,13 @@
+Sending Side:
+apt-get install perl
+apt-get install libsoap-lite-perl 
+
+The sender also needs the sendSMS.pl script
+
+Recieving Side
+sudo apt-get install python-pip
+sudo apt-get install python-opencv python-wxgtk2.8 python-matplotlib python-numpy python-serial python-pil libwxgtk2.8-dev libpython2.7-dev
+sudo pip install MAVProxy
+
+The receiving side needs to run smsListener2 which will require the Maker Modem API
+
