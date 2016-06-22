@@ -20,8 +20,8 @@ my $licenseKey = '<API_LICENSE_KEY>';
 my $userName = '<USERNAME>';
 my $password = '<PASSWORD>';
 my $recipient = '<SIM_ICCID>';
-my $messageinput = $ARGV[1];
-my $messageid = $ARGV[2];
+my $messageinput = $ARGV[0];
+my $messageid = $ARGV[1];
 
 my $service = SOAP::Lite->proxy($url)->uri($JASPER_URI)->autotype(0)->readable(1);
 $service->on_fault(sub {
