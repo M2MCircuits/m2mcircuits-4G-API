@@ -1,7 +1,10 @@
-# Send a SMS using Jasper API from AT&T
+# Send an SMS using Jasper API from AT&T
 # To run, you need to replace $licenseKey, $userName, $password, and $recipient values
 
+# Usage: $ perl sendSMS.pl <drone message> <message id>
+
 #!perl -w
+
 use strict;
 use Data::Dumper;
 use SOAP::Lite +trace => ['debug'];
@@ -17,6 +20,8 @@ my $licenseKey = '<API_LICENSE_KEY>';
 my $userName = '<USERNAME>';
 my $password = '<PASSWORD>';
 my $recipient = '<SIM_ICCID>';
+my $messageinput = $ARGV[1];
+my $messageid = $ARGV[2];
 
 my $service = SOAP::Lite->proxy($url)->uri($JASPER_URI)->autotype(0)->readable(1);
 $service->on_fault(sub {
@@ -35,11 +40,11 @@ my $result = $service->call('SendSMSRequest' => (
 	      SOAP::Data->name('wsse:Username' => $userName),
 	      SOAP::Data->name('wsse:Password' => $password)->
 		   attr({Type => $PASSWORD_TYPE})))),
-  SOAP::Data->name('messageId' => '123'),
+  SOAP::Data->name('messageId' => $messageid),
   SOAP::Data->name('version' => '5.0.1'),
   SOAP::Data->name('licenseKey' => $licenseKey),
   SOAP::Data->name('sentToIccid' => $recipient),
-  SOAP::Data->name('messageText' => 'Hello, Dave'),
+  SOAP::Data->name('messageText' => $messageinput),
   SOAP::Data->name('tpvp' => 0)
 ));
 print "Call result:  SUCCESSFUL\n";
